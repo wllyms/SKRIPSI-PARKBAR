@@ -64,9 +64,9 @@
         </a>
         <div id="collapsParkir" class="collapse" aria-labelledby="headingPage" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="/parkir">Parkir Biasa</a>
+                <a class="collapse-item" href="/parkirbiasa">Parkir Biasa</a>
+                <a class="collapse-item" href="/parkir-keluar">Scan Keluar</a>
                 <a class="collapse-item" href="/scan-pegawai">Parkir Member</a>
-                <a class="collapse-item" href="/parkir-keluar">Scan</a>
             </div>
         </div>
     </li>

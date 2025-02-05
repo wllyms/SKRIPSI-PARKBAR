@@ -235,12 +235,31 @@ class ParkirController extends Controller
         }
     }
 
-    public function tampilkanKendaraanTerparkir()
+    public function dashboard()
     {
-        // Mengambil data kendaraan yang terparkir
-        $kendaraanTerparkir = Parkir::where('status', Parkir::STATUS_TERPARKIR)->get();
+        $tanggalHariIni = Carbon::today();
 
-        // Mengirim data ke view
-        return view('beranda', compact('kendaraanTerparkir'));
+        // Hitung jumlah kendaraan yang masih terparkir hari ini
+        $totalTerparkir = Parkir::whereDate('tanggal', $tanggalHariIni)
+            ->where('status', Parkir::STATUS_TERPARKIR)
+            ->count();
+
+        // Hitung jumlah kendaraan yang keluar hari ini
+        $totalKeluar = Parkir::whereDate('tanggal', $tanggalHariIni)
+            ->where('status', Parkir::STATUS_KELUAR)
+            ->count();
+
+        // Hitung jumlah pendapatan hari ini
+        $totalPendapatan = Parkir::whereDate('tanggal', $tanggalHariIni)
+            ->where('status', Parkir::STATUS_KELUAR)
+            ->join('tarif', 'tarif.id', '=', 'parkir.tarif_id')  // Bergantung pada relasi tabel tarif
+            ->sum('tarif.tarif');  // Menjumlahkan tarif berdasarkan hubungan dengan tabel tarif
+
+        // Hitung jumlah kendaraan terparkir secara keseluruhan
+        $totalKendaraanTerparkir = Parkir::where('status', Parkir::STATUS_TERPARKIR)
+            ->count();
+
+        // Kirim data ke view
+        return view('beranda', compact('totalTerparkir', 'totalKeluar', 'totalPendapatan', 'totalKendaraanTerparkir'));
     }
 }

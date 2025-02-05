@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('pagename', 'Laporan Kendaraan')
+@section('pagename', 'LAPORAN KENDARAAN')
 @section('title', 'ParkBar - Laporan')
 @section('content')
     <div class="row">
@@ -74,7 +74,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($dataParkir as $data) 
+                            @forelse ($dataParkir as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->plat_kendaraan }}</td>

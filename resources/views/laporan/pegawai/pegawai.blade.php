@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('pagename', 'Laporan Pegawai')
+@section('pagename', 'LAPORAN PEGAWAI')
 @section('title', 'ParkBar - Laporan Pegawai')
 @section('content')
 
@@ -175,7 +175,7 @@
                                 <th>No</th>
                                 <th>Plat Kendaraan</th>
                                 <th>Nama</th>
-                                <th>No. Telp</th> 
+                                <th>No. Telp</th>
                                 <th>Jenis Pegawai</th>
                                 <th>Aksi</th>
                             </tr>

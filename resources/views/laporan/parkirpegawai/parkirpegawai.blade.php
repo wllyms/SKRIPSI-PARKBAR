@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('pagename', 'Laporan Parkir Pegawai')
+@section('pagename', 'LAPORAN PARKIR PEGAWAI')
 @section('title', 'ParkBar - Laporan Parkir Pegawai')
 @section('content')
     <div class="row">

@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('pagename', 'Scan Member')
+@section('pagename', 'SCAN MEMBER')
 @section('title', 'ParkBar - Parkiran')
 @section('content')
 

@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('pagename', 'Manajemen Parkiran')
+@section('pagename', 'SCAN PARKIR KELUAR')
 @section('title', 'ParkBar - Parkiran')
 @section('content')
 

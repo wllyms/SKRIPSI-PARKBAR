@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('pagename', 'Kategori Kendaraan')
+@section('pagename', 'KATEGORI KENDARAAN')
 @section('title', 'ParkBar - Kategori')
 @section('content')
 

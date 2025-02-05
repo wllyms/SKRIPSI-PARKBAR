@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('pagename', 'Jenis Pegawai')
+@section('pagename', 'JENIS PEGAWAI')
 @section('title', 'ParkBar - Jenis Pegawai')
 @section('content')
 

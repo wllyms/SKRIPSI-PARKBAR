@@ -14,9 +14,9 @@ use App\Http\Controllers\JenisPegawaiController;
 use App\Http\Controllers\ParkirPegawaiController;
 use App\Http\Controllers\StaffController as ControllersStaffController;
 
-Route::get('/beranda', function () {
-    return view('beranda');
-});
+Route::get('/beranda', [ParkirController::class, 'dashboard'])->name('beranda');
+
+
 
 
 // LOGIN & LOGOT
@@ -61,7 +61,7 @@ Route::put('/pegawai/update/{id}', [PegawaiController::class, 'update'])->name('
 Route::delete('/pegawai/delete/{id}', [PegawaiController::class, 'delete'])->name('manajemen-pegawai.delete');
 
 // PARKIR
-Route::get('/parkir', [ParkirController::class, 'tampil'])->name('manajemen-parkir.tampil');
+Route::get('/parkirbiasa', [ParkirController::class, 'tampil'])->name('manajemen-parkir.tampil');
 Route::post('/parkir/submit', [ParkirController::class, 'submit'])->name('manajemen-parkir.submit');
 Route::put('/parkir/keluar/{id}', [ParkirController::class, 'keluar'])->name('manajemen-parkir.keluar');
 Route::delete('/parkir/delete/{id}', [ParkirController::class, 'delete'])->name('manajemen-parkir.delete');

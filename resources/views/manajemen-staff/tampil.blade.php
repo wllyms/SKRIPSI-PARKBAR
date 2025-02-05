@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('pagename', 'Staff')
+@section('pagename', 'STAFF')
 @section('title', 'ParkBar - Staff')
 @section('content')
 
