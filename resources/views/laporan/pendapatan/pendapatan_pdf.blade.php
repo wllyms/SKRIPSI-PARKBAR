@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
         }
 
         .header {
@@ -15,19 +17,30 @@
             margin-bottom: 20px;
         }
 
+        .header img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
         .header h1 {
-            margin: 0;
+            margin: 5px 0;
+            font-size: 22px;
+            color: #222;
         }
 
         .header p {
-            margin: 0;
+            margin: 3px 0;
             font-size: 14px;
+            font-weight: normal;
+            color: #555;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            font-size: 14px;
         }
 
         table,
@@ -42,8 +55,10 @@
             text-align: left;
         }
 
-        th {
-            background-color: #f2f2f2;
+        table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
         }
 
         .total {
@@ -51,11 +66,24 @@
             margin-top: 20px;
             font-weight: bold;
         }
+
+        .footer {
+            margin-top: 30px;
+            text-align: right;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .divider {
+            border-top: 2px solid #000;
+            margin-top: 20px;
+        }
     </style>
 </head>
 
 <body>
     <div class="header">
+        <img src="{{ public_path('storage/logo-rs.png') }}" alt="Logo RS Bhayangkara">
         <h1>Laporan Pendapatan</h1>
         <p>Periode: {{ \Carbon\Carbon::parse($tanggalMulai)->format('d-m-Y') }} s/d
             {{ \Carbon\Carbon::parse($tanggalSelesai)->format('d-m-Y') }}</p>
@@ -65,6 +93,9 @@
             <p>Jenis Tarif: Semua</p>
         @endif
     </div>
+
+    <div class="divider"></div>
+
     <table>
         <thead>
             <tr>
@@ -89,8 +120,15 @@
             @endforeach
         </tbody>
     </table>
+
     <div class="total">
         Total Pendapatan: Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="footer">
+        Dicetak pada: {{ \Carbon\Carbon::now()->format('d-m-Y') }}
     </div>
 </body>
 

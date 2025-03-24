@@ -16,9 +16,6 @@ use App\Http\Controllers\StaffController as ControllersStaffController;
 
 Route::get('/beranda', [ParkirController::class, 'dashboard'])->name('beranda');
 
-
-
-
 // LOGIN & LOGOT
 Route::get('/login', [SesiController::class, 'index'])->name('login');
 Route::post('/login', [SesiController::class, 'login']);

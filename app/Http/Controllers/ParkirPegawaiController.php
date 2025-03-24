@@ -31,23 +31,9 @@ class ParkirPegawaiController extends Controller
             ], 404);
         }
 
-        $currentDate = Carbon::now('Asia/Makassar')->format('Y-m-d');
-
-        $existingParkir = ParkirPegawai::where('pegawai_id', $pegawai->id)
-            ->where('tanggal', $currentDate)
-            ->where('status', ParkirPegawai::STATUS_TERPARKIR)
-            ->first();
-
-        if ($existingParkir) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Pegawai ini sudah tercatat parkir dan masih berstatus Terparkir.'
-            ], 400);
-        }
-
         ParkirPegawai::create([
             'plat_kendaraan' => $pegawai->plat_kendaraan,
-            'tanggal' => $currentDate,
+            'tanggal' => Carbon::now('Asia/Makassar')->format('Y-m-d'),
             'jam_masuk' => Carbon::now('Asia/Makassar')->format('H:i'),
             'pegawai_id' => $pegawai->id,
             'status' => ParkirPegawai::STATUS_TERPARKIR,

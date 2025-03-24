@@ -30,17 +30,20 @@
 
         function onScanSuccess(decodedText, decodedResult) {
             if (isProcessing) {
-                Swal.fire({
-                    title: 'Harap Tunggu!',
-                    text: 'Silakan tunggu sebelum memindai lagi.',
-                    icon: 'warning',
-                    timer: WAIT_TIME,
-                    showConfirmButton: false
-                });
+                // Jika alert belum terlihat, tampilkan alert peringatan
+                if (!Swal.isVisible()) {
+                    Swal.fire({
+                        title: 'Harap Tunggu!',
+                        text: 'Silakan tunggu sebelum memindai lagi.',
+                        icon: 'warning',
+                        timer: WAIT_TIME,
+                        showConfirmButton: false
+                    });
+                }
                 return;
             }
 
-            isProcessing = true; // Mengunci proses pemindaian
+            isProcessing = true; // Kunci proses pemindaian
             console.log(`Kode ditemukan: ${decodedText}`, decodedResult);
 
             Swal.fire({
@@ -101,7 +104,7 @@
         }
 
         function onScanFailure(error) {
-            // console.warn(`Scan error: ${error}`);
+            // Penanganan error scan jika diperlukan
         }
 
         let html5QrcodeScanner = new Html5QrcodeScanner(

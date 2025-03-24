@@ -24,10 +24,15 @@ class ParkirController extends Controller
     public function tampil()
     {
         $tarif = Tarif::get();
-        $parkir = Parkir::with('tarif')->orderBy('tanggal', 'desc')->get();;
+        $parkir = Parkir::with('tarif')
+            ->orderBy('tanggal', 'desc')  // Urutkan berdasarkan tanggal terbaru
+            ->orderBy('created_at', 'desc') // Urutkan berdasarkan jam masuk terbaru dalam tanggal yang sama
+            ->get();
         $jam = Carbon::now('Asia/Makassar')->format('H:i');
+
         return view('manajemen-parkir.tampil', compact('tarif', 'parkir', 'jam'));
     }
+
 
     public function scanKeluar()
     {
@@ -37,7 +42,9 @@ class ParkirController extends Controller
     public function cetakParkir($id)
     {
         $parkir = Parkir::with('tarif')->findOrFail($id);
-        $pdf = Pdf::loadView('manajemen-parkir.cetak-parkir', compact('parkir'));
+        $pdf = Pdf::loadView('manajemen-parkir.cetak-parkir', compact('parkir'))
+            ->setPaper([0, 0, 226.77, 283.46], 'portrait'); // 58mm x 100mm dalam satuan points
+
         return $pdf->stream('Struk_' . $parkir->plat_kendaraan . '.pdf');
     }
 
@@ -56,6 +63,15 @@ class ParkirController extends Controller
         $parkir->tanggal = Carbon::now()->format('Y-m-d');
         $parkir->status = Parkir::STATUS_TERPARKIR;
         $parkir->save();
+
+        // // Pastikan relasi tarif sudah ada jika ingin mengakses data tarif di view
+        // $parkir->load('tarif');
+
+        // // Generate PDF dari view 'pdf.karcis'
+        // $pdf = PDF::loadView('manajemen-parkir.cetak-parkir', compact('parkir'));
+
+        // // Mengirim file PDF untuk didownload dengan nama file yang unik
+        // return $pdf->download('karcis_' . $parkir->id . '.pdf');
 
         return back()->with('success', 'Data Berhasil Ditambahkan');
     }

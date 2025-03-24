@@ -45,6 +45,11 @@
         .btn-primary:hover {
             background: #004494;
         }
+
+        .input-group-append .btn {
+            border-radius: 0 8px 8px 0;
+            border-left: none;
+        }
     </style>
 </head>
 
@@ -54,7 +59,7 @@
             <div class="col-md-5">
                 <div class="card p-4">
                     <div class="text-center mb-3">
-                        <h2 class="text-dark font-weight-bold">SIPARKIR</h2>
+                        <h2 class="text-dark font-weight-bold">PARKBARA</h2>
                         <p class="text-muted">Selamat Datang di Aplikasi Parkir</p>
                     </div>
                     @if ($errors->any())
@@ -84,8 +89,13 @@
                                     <span class="input-group-text bg-primary text-white"><i
                                             class="fas fa-lock"></i></span>
                                 </div>
-                                <input type="password" class="form-control" name="password"
+                                <input type="password" class="form-control" name="password" id="password"
                                     placeholder="Masukkan Password" required>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group text-center">
@@ -96,8 +106,24 @@
             </div>
         </div>
     </div>
+
     <script src="{{ asset('tempe1/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('tempe1/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+        document.getElementById("togglePassword").addEventListener("click", function() {
+            let passwordInput = document.getElementById("password");
+            let icon = this.querySelector("i");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        });
+    </script>
 </body>
 
 </html>

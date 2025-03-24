@@ -15,6 +15,12 @@
             margin-bottom: 20px;
         }
 
+        header img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
         header h1,
         header h4 {
             margin: 0;
@@ -38,13 +44,13 @@
         table td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
 
         table th {
-            background-color: #f4f4f4;
+            background-color: #007bff;
+            color: white;
             font-weight: bold;
-            text-align: center;
         }
 
         table tbody tr:nth-child(even) {
@@ -61,30 +67,52 @@
             font-size: 12px;
             color: #777;
         }
+
+        .divider {
+            border-top: 2px solid #000;
+            margin-top: 20px;
+        }
+
+        .img-pegawai {
+            width: 60px;
+            height: 65px;
+            object-fit: contain;
+            /* Menjaga rasio aspek gambar */
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 
 <body>
     <header>
+        <img src="{{ public_path('storage/logo-rs.png') }}" alt="Logo RS Bhayangkara">
         <h1>Laporan Pegawai</h1>
         <h4>RS Bhayangkara Banjarmasin</h4>
     </header>
+
+    <div class="divider"></div>
 
     <table>
         <thead>
             <tr>
                 <th>No</th>
-                <th>Plat Kendaraan</th>
+                <th>Foto Pegawai</th>
                 <th>Nama</th>
                 <th>No. Telp</th>
                 <th>Jenis Pegawai</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($pegawai as $data) 
+            @forelse ($pegawai as $data)
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
-                    <td>{{ $data->plat_kendaraan }}</td>
+                    <td class="text-center">
+                        @if ($data->image)
+                            <img src="{{ public_path('storage/' . $data->image) }}" alt="Foto Pegawai" class="img-pegawai">
+                        @else
+                            <p>Tidak Ada Gambar</p>
+                        @endif
+                    </td>
                     <td>{{ $data->nama }}</td>
                     <td>{{ $data->no_telp }}</td>
                     <td>{{ $data->jenisPegawai->jenis_pegawai }}</td>
@@ -96,6 +124,8 @@
             @endforelse
         </tbody>
     </table>
+
+    <div class="divider"></div>
 
     <div class="footer">
         Dicetak pada: {{ \Carbon\Carbon::now()->format('d-m-Y') }}

@@ -90,7 +90,7 @@ class PegawaiController extends Controller
             // Redirect dengan pesan error tanpa mencatat log
             return back()->with('error', 'Gagal memperbarui pegawai: ' . $e->getMessage());
         }
-    }
+    } 
 
     public function laporan(Request $request)
     {

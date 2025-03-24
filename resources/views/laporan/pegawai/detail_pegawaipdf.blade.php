@@ -18,7 +18,7 @@
         }
 
         header img {
-            width: 80px;
+            width: 100px;
             height: auto;
             margin-bottom: 10px;
         }
@@ -46,10 +46,8 @@
         table td {
             border: 1px solid #ddd;
             padding: 10px 15px;
-            /* Memberikan ruang lebih pada sel */
             text-align: left;
             vertical-align: top;
-            /* Menjaga data tetap rapi */
         }
 
         table th {
@@ -66,46 +64,45 @@
             text-align: center;
         }
 
+        table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
         table th:nth-child(1),
         table td:nth-child(1) {
             width: 5%;
-            /* Kolom "No" lebih kecil */
         }
 
         table th:nth-child(2),
         table td:nth-child(2) {
             width: 20%;
-            /* Kolom "Nama Lengkap" */
         }
 
         table th:nth-child(3),
         table td:nth-child(3) {
             width: 15%;
-            /* Kolom "Plat Kendaraan" */
         }
 
         table th:nth-child(4),
         table td:nth-child(4) {
             width: 15%;
-            /* Kolom "No Telp" */
         }
 
         table th:nth-child(5),
         table td:nth-child(5) {
             width: 15%;
-            /* Kolom "Email" */
         }
 
         table th:nth-child(6),
         table td:nth-child(6) {
             width: 20%;
-            /* Kolom "Alamat" */
         }
 
         table th:nth-child(7),
         table td:nth-child(7) {
             width: 10%;
-            /* Kolom "Merk Kendaraan" */
         }
 
         .footer {
@@ -120,8 +117,12 @@
 <body>
     <!-- Header -->
     <header>
+        <img src="{{ public_path('storage/logo-rs.png') }}" alt="Logo RS Bhayangkara">
         <h1>Laporan Detail Pegawai</h1>
+        <h4>RS Bhayangkara Banjarmasin</h4>
     </header>
+
+    <div class="divider"></div>
 
     <!-- Photo -->
     <div class="photo">
@@ -131,6 +132,8 @@
             <p>Foto tidak tersedia</p>
         @endif
     </div>
+
+    <div class="divider"></div>
 
     <!-- Table Data -->
     <table>
@@ -157,6 +160,8 @@
             </tr>
         </tbody>
     </table>
+
+    <div class="divider"></div>
 
     <!-- Footer -->
     <div class="footer">

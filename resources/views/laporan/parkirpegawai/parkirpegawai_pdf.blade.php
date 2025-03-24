@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -8,54 +8,86 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
-            margin: 0;
-            padding: 0;
+            margin: 30px;
+            color: #333;
         }
 
-        .header {
+        header {
             text-align: center;
             margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #000;
         }
 
-        .header h1,
-        .header h3 {
-            margin: 0;
+        .logo {
+            width: 80px;
+            /* Ukuran logo yang lebih proporsional */
+            height: auto;
+            margin-bottom: 10px;
         }
 
-        .table {
+        h1 {
+            margin: 5px 0;
+            font-size: 22px;
+            color: #222;
+        }
+
+        h3 {
+            margin: 3px 0;
+            font-size: 14px;
+            font-weight: normal;
+            color: #555;
+        }
+
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 20px;
+            font-size: 14px;
         }
 
-        .table th,
-        .table td {
-            border: 1px solid #000;
-            padding: 5px;
-            text-align: left;
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
         }
 
-        .table th {
-            background-color: #f2f2f2;
+        table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f1f1;
         }
 
         .footer {
+            margin-top: 30px;
             text-align: right;
-            margin-top: 20px;
-            font-size: 10px;
+            font-size: 12px;
+            color: #777;
+            border-top: 2px solid #000;
+            padding-top: 10px;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
+    <header>
+        <img src="{{ public_path('storage/logo-rs.png') }}" alt="Logo RS Bhayangkara" class="logo">
         <h1>Laporan Parkir Pegawai</h1>
+        <h3>RS Bhayangkara Banjarmasin</h3>
         <h3>Periode: {{ \Carbon\Carbon::parse($tanggalMulai)->format('d-m-Y') }}
             s/d {{ \Carbon\Carbon::parse($tanggalSelesai)->format('d-m-Y') }}</h3>
-    </div>
+    </header>
 
-    <table class="table">
+    <table>
         <thead>
             <tr>
                 <th>No</th>
@@ -63,7 +95,6 @@
                 <th>Tanggal</th>
                 <th>Jam Masuk</th>
                 <th>Nama Pegawai</th>
-                {{-- <th>Status</th> --}}
             </tr>
         </thead>
         <tbody>
@@ -72,20 +103,20 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $data->plat_kendaraan }}</td>
                     <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
-                    <td>{{ $data->jam_masuk ?? '-' }}</td>
+                    <td>{{ $data->jam_masuk ? \Carbon\Carbon::parse($data->jam_masuk)->format('H:i') : '-' }}</td>
                     <td>{{ $data->pegawai->nama }}</td>
-                    {{-- <td>{{ $data->status }}</td> --}}
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="text-align: center;">Data tidak ditemukan</td>
+                    <td colspan="5" class="text-center">Data tidak ditemukan</td>
                 </tr>
             @endforelse
         </tbody>
+
     </table>
 
     <div class="footer">
-        Dicetak pada: {{ \Carbon\Carbon::now()->format('d-m-Y H:i:s') }}
+        Dicetak pada: {{ \Carbon\Carbon::now()->format('d-m-Y') }}
     </div>
 </body>
 
