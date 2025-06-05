@@ -71,6 +71,18 @@
             </div>
         </div>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/denda">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>Denda</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/pengunjung">
+            <i class="fas fa-file-alt"></i>
+            <span>Pengaduan Pengunjung</span>
+        </a>
+    </li>
     <hr class="sidebar-divider">
     <div class="sidebar-heading">
         REPORT
@@ -83,10 +95,11 @@
         </a>
         <div id="collapsLaporan" class="collapse" aria-labelledby="headingPage" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="/laporanparkir">Parkir</a>
-                <a class="collapse-item" href="/laporan/pegawai">Pegawai</a>
-                <a class="collapse-item" href="/laporan/parkirpegawai">Parkir Pegawai</a>
+                <a class="collapse-item" href="/laporan-parkir">Parkir</a>
+                <a class="collapse-item" href="/laporan-pegawai">Pegawai</a>
+                <a class="collapse-item" href="/laporan-parkirpegawai">Parkir Pegawai</a>
                 <a class="collapse-item" href="/laporan-pendapatan">Pendapatan</a>
+                <a class="collapse-item" href="/laporan-pengaduan">Pengaduan</a>
                 {{-- <a class="collapse-item" href="register.html">Laporan Pendapatan</a> --}}
             </div>
         </div>

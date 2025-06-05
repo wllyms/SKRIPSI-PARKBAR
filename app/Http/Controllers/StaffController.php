@@ -18,7 +18,7 @@ class StaffController extends Controller
     {
         $staff = new Staff();
         $staff->nama = $request->nama;
-        $staff->no_telp = $request->no_telp;
+        $staff->no_telp = $request->no_telp; 
         $staff->alamat = $request->alamat;
         $staff->save();
 

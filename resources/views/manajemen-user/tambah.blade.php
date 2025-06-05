@@ -22,7 +22,11 @@
                     </div>
                     <div class="form-group">
                         <label for="role">Role</label>
-                        <input type="text" class="form-control" name="role" id="role" required>
+                        <select class="form-control" name="role" id="role" required>
+                            <option value="" disabled selected>-- Pilih Role --</option>
+                            <option value="admin">Admin</option>
+                            <option value="super admin">Super Admin</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="staff">Staff</label>

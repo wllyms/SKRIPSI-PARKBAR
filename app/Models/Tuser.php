@@ -30,4 +30,15 @@ class Tuser extends Authenticatable
     {
         return $this->belongsTo(Staff::class);
     }
+
+    // Relasi one-to-many: satu user punya banyak laporan pengunjung
+    public function laporanPengunjung()
+    {
+        return $this->hasMany(LaporanPengunjung::class, 'user_id');
+    }
+
+    public function parkiran()
+    {
+        return $this->hasMany(Parkir::class, 'user_id');
+    }
 }

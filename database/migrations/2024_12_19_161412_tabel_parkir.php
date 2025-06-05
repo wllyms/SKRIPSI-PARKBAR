@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('plat_kendaraan');
 
-            $table->unsignedBigInteger('tarif_id');
-            $table->foreign('tarif_id')->references('id')->on('tarif')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('tarif_id')->constrained('tarif')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('user_id')->constrained('tuser')->cascadeOnDelete();
 
-            $table->date('tanggal')->nullable();
-            $table->string('jam_masuk');
-            $table->string('jam_keluar')->nullable();
-            $table->enum('status', ['Terparkir', 'Keluar'])->default('Terparkir'); // Kolom Status
+            $table->dateTime('waktu_masuk');            // gabungan tanggal + jam masuk
+            $table->dateTime('waktu_keluar')->nullable(); // gabungan tanggal + jam keluar, nullable karena kendaraan bisa belum keluar
+
+            $table->enum('status', ['Terparkir', 'Keluar'])->default('Terparkir');
+
             $table->timestamps();
         });
     }

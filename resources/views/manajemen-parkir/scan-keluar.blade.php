@@ -52,7 +52,7 @@
                 }
             });
 
-            fetch('/process-scan-keluar', {
+            fetch('/prosess-scan-keluar', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -64,16 +64,26 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    Swal.close();
+                    console.log('Response JSON:', data);
+
                     if (data && data.success) {
+                        let message =
+                            `Kendaraan dengan plat ${data.data.plat_kendaraan} telah keluar pada ${data.data.waktu_keluar}.`;
+                        if (data.data.denda > 0) {
+                            message += ` Denda: Rp${data.data.denda.toLocaleString('id-ID')}`;
+                        }
+
                         Swal.fire({
                             title: 'Berhasil!',
-                            text: `Kendaraan dengan plat ${data.data.plat_kendaraan} telah keluar pada ${data.data.jam_keluar}.`,
+                            text: message,
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = '{{ route('manajemen-parkir.tampil') }}';
+                            setTimeout(() => {
+                                window.location.href = data.data.redirect;
+                            }, 2000); // delay 2 detik setelah klik OK
                         });
+
                     } else {
                         Swal.fire({
                             title: 'Gagal!',
@@ -85,7 +95,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    Swal.close();
+
                     Swal.fire({
                         title: 'Error!',
                         text: 'Terjadi kesalahan saat memproses scan. Silakan coba lagi.',
@@ -114,7 +124,9 @@
             },
             false
         );
+
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
+
 
 @endsection

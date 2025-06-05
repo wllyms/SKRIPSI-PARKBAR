@@ -58,19 +58,26 @@
                                     {{-- <td>{{ $data->no_telp }}</td> --}}
                                     <td>{{ $data->jenispegawai->jenis_pegawai }}</td>
                                     <td class="d-flex justify-content-center text-white">
-                                        <a class="btn btn-info btn-sm mr-1"
-                                            href="{{ route('manajemen-pegawai.detailpegawai', $data->id) }}">
-                                            <i class="fa fa-id-card"></i>
+                                        {{-- Detail Pegawai --}}
+                                        <a class="btn btn-info btn-sm text-white mr-1"
+                                            href="{{ route('manajemen-pegawai.detailpegawai', $data->id) }}"
+                                            title="Lihat Detail Pegawai">
+                                            <i class="fas fa-id-card"></i> ID Card
                                         </a>
-                                        <button class="btn btn-warning btn-sm mr-1" data-toggle="modal"
-                                            data-target="#editModal{{ $data->id }}">
-                                            <i class="fas fa-edit"></i>
+
+                                        {{-- Edit Pegawai --}}
+                                        <button class="btn btn-warning btn-sm text-white mr-1" data-toggle="modal"
+                                            data-target="#editModal{{ $data->id }}" title="Edit Data Pegawai">
+                                            <i class="fas fa-edit"></i> Edit
                                         </button>
-                                        <button class="btn btn-danger btn-sm" data-toggle="modal"
-                                            data-target="#deleteModal{{ $data->id }}">
-                                            <i class="fas fa-trash"></i>
+
+                                        {{-- Hapus Pegawai --}}
+                                        <button class="btn btn-danger btn-sm text-white" data-toggle="modal"
+                                            data-target="#deleteModal{{ $data->id }}" title="Hapus Data Pegawai">
+                                            <i class="fas fa-trash-alt"></i> Hapus
                                         </button>
                                     </td>
+
 
                                 </tr>
                             @endforeach

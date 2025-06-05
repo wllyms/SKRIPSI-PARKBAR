@@ -21,9 +21,9 @@
 <script src="{{ asset('tempe1/js/ruang-admin.min.js') }}"></script>
 <script src="{{ asset('tempe1/vendor/chart.js/Chart.min.js') }}"></script>
 <script src="{{ asset('tempe1/js/demo/chart-area-demo.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-</script>
+</script> --}}
 
 <!-- Data Tables -->
 

@@ -10,7 +10,7 @@
             </div>
             <!-- Form Tambah Data -->
             <form action="{{ route('manajemen-staff.submit') }}" method="POST">
-                @csrf
+                @csrf 
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="nama">Nama</label>

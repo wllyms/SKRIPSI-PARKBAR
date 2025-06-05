@@ -17,7 +17,7 @@ class Tarif extends Model
 
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class, 'kategori_id', 'id');
+        return $this->belongsTo(Kategori::class);
     }
 
     public function parkir(): HasMany // One to Many relasi

@@ -3,7 +3,7 @@
     <div class="modal fade" id="editModal{{ $data->id }}" tabindex="-1" role="dialog"
         aria-labelledby="tambahModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
+            <div class="modal-content"> 
                 <div class="modal-header bg-gradient-primary">
                     <h5 class="modal-title text-white" id="tambahModalLabel">Edit Staff</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

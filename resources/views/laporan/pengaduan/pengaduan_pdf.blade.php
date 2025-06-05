@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Pendapatan</title>
+    <title>Laporan Pengaduan Pengunjung</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,12 +60,6 @@
             font-weight: bold;
         }
 
-        .total {
-            text-align: right;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
         .footer {
             margin-top: 30px;
             text-align: right;
@@ -84,14 +77,9 @@
 <body>
     <div class="header">
         <img src="{{ public_path('storage/logo-rs.png') }}" alt="Logo RS Bhayangkara">
-        <h1>Laporan Pendapatan</h1>
+        <h1>Laporan Pengaduan Pengunjung</h1>
         <p>Periode: {{ \Carbon\Carbon::parse($tanggalMulai)->format('d-m-Y') }} s/d
             {{ \Carbon\Carbon::parse($tanggalSelesai)->format('d-m-Y') }}</p>
-        @if ($jenisTarif)
-            <p>Jenis Tarif: {{ ucfirst($jenisTarif) }}</p>
-        @else
-            <p>Jenis Tarif: Semua</p>
-        @endif
     </div>
 
     <div class="divider"></div>
@@ -100,43 +88,26 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Plat Kendaraan</th>
-                <th>Jenis Tarif - Kategori</th>
-                <th>Waktu Masuk</th>
-                <th>Waktu Keluar</th>
-                <th>Tarif</th>
-                <th>Denda</th>
-                <th>Total</th>
+                <th>Nama</th>
+                <th>No Telp</th>
+                <th>Waktu Lapor</th>
+                <th>Keterangan</th>
+                <th>Petugas</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($dataParkir as $data)
+            @foreach ($laporan as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $data->plat_kendaraan }}</td>
-                    <td>
-                        {{ ucfirst($data->tarif->jenis_tarif ?? '-') }}
-                        -
-                        {{ $data->tarif->kategori->nama_kategori ?? '-' }}
-                    </td>
-                    <td>{{ $data->waktu_masuk ? \Carbon\Carbon::parse($data->waktu_masuk)->format('H:i - d/m/Y') : '-' }}
-                    </td>
-                    <td>{{ $data->waktu_keluar ? \Carbon\Carbon::parse($data->waktu_keluar)->format('H:i - d/m/Y') : '-' }}
-                    </td>
-                    <td>Rp {{ number_format($data->tarif->tarif ?? 0, 0, ',', '.') }}</td>
-                    <td>Rp {{ number_format($data->denda->nominal ?? 0, 0, ',', '.') }}</td>
-                    <td>
-                        Rp
-                        {{ number_format(($data->tarif->tarif ?? 0) + ($data->denda->nominal ?? 0), 0, ',', '.') }}
-                    </td>
+                    <td>{{ $item->nama }}</td>
+                    <td>{{ $item->no_telp }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->waktu_lapor)->format('d-m-Y H:i') }}</td>
+                    <td>{{ $item->keterangan }}</td>
+                    <td>{{ $item->user->staff->nama ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-
-    <div class="total">
-        Total Pendapatan: Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
-    </div>
 
     <div class="divider"></div>
 

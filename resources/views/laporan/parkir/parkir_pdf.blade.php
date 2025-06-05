@@ -93,22 +93,31 @@
                 <th>No</th>
                 <th>Plat Kendaraan</th>
                 <th>Jenis Tarif</th>
-                <th>Jam Masuk</th>
-                <th>Jam Keluar</th>
+                <th>Waktu Masuk</th>
+                <th>Waktu Keluar</th>
                 <th>Status</th>
-                <th>Tanggal</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($dataParkir as $data)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $data->plat_kendaraan }}</td>
-                    <td>{{ $data->tarif->jenis_tarif ?? '-' }}</td>
-                    <td>{{ $data->jam_masuk }}</td>
-                    <td>{{ $data->jam_keluar ?? '-' }}</td>
-                    <td>{{ Str::title($data->status) }}</td>
-                    <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
+                    <td class="text-center">{{ $loop->iteration }}</td>
+                    <td class="text-uppercase">{{ $data->plat_kendaraan }}</td>
+                    <td>
+                        {{ $data->tarif->jenis_tarif ?? '-' }} -
+                        {{ $data->tarif->kategori->nama_kategori ?? '-' }}
+                    </td>
+                    <td>
+                        {{ $data->waktu_masuk ? \Carbon\Carbon::parse($data->waktu_masuk)->format('H:i - d/m/Y') : '-' }}
+                    </td>
+                    <td>
+                        {{ $data->waktu_keluar ? \Carbon\Carbon::parse($data->waktu_keluar)->format('H:i - d/m/Y') : '-' }}
+                    </td>
+                    <td class="text-center">
+                        <span class="badge badge-{{ $data->status === 'Terparkir' ? 'success' : 'secondary' }}">
+                            {{ $data->status }}
+                        </span>
+                    </td>
                 </tr>
             @empty
                 <tr>

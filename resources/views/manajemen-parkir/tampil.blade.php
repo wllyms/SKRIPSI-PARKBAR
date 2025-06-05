@@ -5,9 +5,10 @@
 @section('content')
 
     <div class="row">
-        <!-- Datatables -->
         <div class="col-lg-12">
             <div class="card mb-4">
+
+                {{-- Notifikasi --}}
                 <div>
                     @if (session('success'))
                         <div class="alert alert-success alert-dismissible" role="alert">
@@ -17,9 +18,8 @@
                             </button>
                         </div>
                     @endif
-
                     @if (session('error'))
-                        <div class="alert alert-dagger alert-dismissible" role="alert">
+                        <div class="alert alert-danger alert-dismissible" role="alert">
                             {!! session('error') !!}
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -28,28 +28,27 @@
                     @endif
                 </div>
 
+                {{-- Header --}}
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Data Parkiran</h6>
-                    <div>
-                        <!-- Button Modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahModal">
-                            Tambah
-                        </button>
-                    </div>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahModal">
+                        Tambah
+                    </button>
                 </div>
+
+                {{-- Tabel --}}
                 <div class="table-responsive p-3">
                     <table class="table align-items-center table-flush" id="dataTable">
                         <thead class="thead-light">
                             <tr>
                                 <th>No</th>
                                 <th>Plat Kendaraan</th>
-                                <th>Jenis tarif</th>
-                                {{-- <th>Tarif</th> --}}
-                                <th>Jam Masuk</th>
-                                <th>Jam Keluar</th>
-                                <th>Tanggal</th>
+                                <th>Jenis Tarif</th>
+                                <th>Waktu Masuk</th>
+                                <th>Waktu Keluar</th>
                                 <th>Status</th>
-                                <th class="d-flex justify-content-center">Aksi</th>
+                                <th>Petugas</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,44 +56,62 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->plat_kendaraan }}</td>
-                                    <td>{{ $data->tarif->jenis_tarif }}</td>
-                                    {{-- <td>{{ $data->tarif->tarif }}</td> --}}
-                                    <td>{{ $data->jam_masuk }}</td>
-                                    <td>{{ $data->jam_keluar }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
+                                    <td>
+                                        {{ $data->tarif->jenis_tarif ?? '-' }} -
+                                        {{ $data->tarif->kategori->nama_kategori ?? '-' }}
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($data->waktu_masuk)->format('H:i - d/m/Y') }}</td>
+                                    <td>
+                                        @if ($data->waktu_keluar)
+                                            {{ \Carbon\Carbon::parse($data->waktu_keluar)->format('H:i - d/m/Y') }}
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+
                                     <td>
                                         @if ($data->status == 'Terparkir')
-                                            <span class="badge badge-secondary">
-                                                Terparkir
-                                            </span>
+                                            <span class="badge badge-secondary">Terparkir</span>
                                         @else
                                             <span class="badge badge-success">Keluar</span>
                                         @endif
+                                    </td>
+                                    <td>{{ $data->user->staff->nama ?? '-' }}</td>
+                                    <td class="text-center">
+                                        {{-- Cetak Barcode --}}
+                                        <a class="btn btn-info btn-sm text-white"
+                                            href="{{ route('manajemen-parkir.cetak-parkir', $data->id) }}"
+                                            title="Cetak Tiket Parkir">
+                                            <i class="fas fa-barcode"></i> Cetak
+                                        </a>
 
+                                        {{-- Hapus Data --}}
+                                        <a class="btn btn-danger btn-sm text-white" data-toggle="modal"
+                                            data-target="#deleteModal{{ $data->id }}" title="Hapus Data Parkir">
+                                            <i class="fas fa-trash-alt"></i> Hapus
+                                        </a>
+
+                                        {{-- Manual Keluar --}}
+                                        @if ($data->status == 'Terparkir')
+                                            <a class="btn btn-warning btn-sm text-white" data-toggle="modal"
+                                                data-target="#keluarModal{{ $data->id }}" title="Proses Keluar Manual">
+                                                <i class="fas fa-sign-out-alt"></i> Keluar
+                                            </a>
+                                        @endif
                                     </td>
-                                    <td class="d-flex justify-content-center text-white">
-                                        <a class="btn btn-info btn-sm mr-1"
-                                            href="{{ route('manajemen-parkir.cetak-parkir', $data->id) }}">
-                                            <i class="fa fa-id-card"></i>
-                                        </a>
-                                        <a class="btn btn-danger btn-sm mr-1" data-toggle="modal"
-                                            data-target="#deleteModal{{ $data->id }}">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                        <a class="btn btn-primary btn-sm" data-toggle="modal"
-                                            data-target="#keluarModal{{ $data->id }}">
-                                            Manual
-                                        </a>
-                                    </td>
+
                                 </tr>
 
-                                {{-- Modal Keluar Manual --}}
+                                {{-- Modal Keluar --}}
                                 <div class="modal fade" id="keluarModal{{ $data->id }}" tabindex="-1" role="dialog"
-                                    aria-labelledby="tambahModalLabel" aria-hidden="true">
+                                    aria-labelledby="keluarModalLabel{{ $data->id }}" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
-                                            <div class="modal-header bg-gradient-primary">
-                                                <h5 class="modal-title text-white" id="tambahModalLabel">Parkir Keluar</h5>
+                                            <div class="modal-header bg-gradient-danger">
+                                                <h5 class="modal-title text-white"
+                                                    id="keluarModalLabel{{ $data->id }}">
+                                                    Proses Parkir Keluar
+                                                </h5>
                                                 <button type="button" class="close text-white" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -103,55 +120,44 @@
 
                                             <form action="{{ route('manajemen-parkir.keluar', $data->id) }}"
                                                 method="POST">
-                                                @method('PUT')
                                                 @csrf
+                                                @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="form-group">
-                                                        <label for="plat_kendaraan">Plat Kendaraan</label>
-                                                        <input type="text" class="form-control" name="plat_kendaraan"
-                                                            id="plat_kendaraan" value="{{ $data->plat_kendaraan }}"
-                                                            readonly>
+                                                        <label for="waktu_keluar">Waktu Keluar</label>
+                                                        <input type="datetime-local" class="form-control"
+                                                            name="waktu_keluar" required
+                                                            value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label for="jenis_tarif">Tarif</label>
-                                                        <input type="text" class="form-control" name="jenis_tarif"
-                                                            id="jenis_tarif" value="{{ $data->tarif->jenis_tarif }}"
-                                                            readonly>
+
+                                                    <div class="alert alert-warning">
+                                                        Pastikan waktu keluar lebih lambat dari waktu masuk.<br>
+                                                        Denda dikenakan jika melebihi batas jam parkir (contoh: 12 jam
+                                                        NON-INAP, 24 jam INAP).
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label for="jam_masuk">Jam Masuk</label>
-                                                        <input type="text" class="form-control" name="jam_masuk"
-                                                            id="jam_masuk" value="{{ $data->jam_masuk }}" readonly>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="jam_keluar">Jam Keluar</label>
-                                                        <input type="text" class="form-control" name="jam_keluar"
-                                                            id="jam_keluar"
-                                                            value="{{ \Carbon\Carbon::parse($jam)->format('H:i') }}"
-                                                            readonly>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-dismiss="modal">Kembali</button>
-                                                        <button type="submit" class="btn btn-primary">Keluar</button>
-                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-danger">Proses Keluar</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
+
+                                {{-- Modal Hapus --}}
+                                @include('manajemen-parkir.delete', ['id' => $data->id])
                             @endforeach
-
-                            <!---- Modal Tambah ---->
-                            @include('manajemen-parkir.tambah')
-
-                            <!---- Modal Tambah ---->
-                            @include('manajemen-parkir.delete')
-
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Tambah -->
+    @include('manajemen-parkir.tambah')
+
 @endsection
