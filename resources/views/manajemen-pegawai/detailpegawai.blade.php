@@ -168,11 +168,11 @@
                             <br>
                             <!-- Barcode -->
                             <div class="barcode">
-                                @if (!empty($pegawai->plat_kendaraan))
+                                @if (!empty($pegawai->kode_member))
                                     @php
                                         $generator = new \Picqer\Barcode\BarcodeGeneratorHTML();
                                         $barcode = $generator->getBarcode(
-                                            $pegawai->plat_kendaraan,
+                                            $pegawai->kode_member,
                                             $generator::TYPE_CODE_128,
                                         );
                                     @endphp

@@ -15,6 +15,11 @@
                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                 <div class="modal-body">
                     <div class="form-group">
+                        <label for="kode_parkir">Kode Parkir</label>
+                        <input type="text" class="form-control" id="kode_parkir" value="{{ $kodeParkir }}"
+                            readonly>
+                    </div>
+                    <div class="form-group">
                         <label for="plat_kendaraan">Plat Kendaraan</label>
                         <input type="text" class="form-control" name="plat_kendaraan" id="plat_kendaraan" required>
                     </div>

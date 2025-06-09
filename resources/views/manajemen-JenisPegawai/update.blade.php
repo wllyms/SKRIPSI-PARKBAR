@@ -5,7 +5,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-gradient-primary">
-                    <h5 class="modal-title text-white" id="tambahModalLabel">Edit Jenis Pegawai</h5>
+                    <h5 class="modal-title text-white" id="tambahModalLabel">Edit Ketegori Pegawai</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -16,7 +16,7 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="jenis_pegawai">Jenis Pegawai</label>
+                            <label for="jenis_pegawai">Ketegori Pegawai</label>
                             <input type="text" name="jenis_pegawai" class="form-control" id="jenis_pegawai"
                                 value="{{ $data->jenis_pegawai }}">
                         </div>

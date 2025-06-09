@@ -42,9 +42,9 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>No</th>
+                                <th>Kode Pegawai</th>
                                 <th>Plat Kendaraan</th>
                                 <th>Nama</th>
-                                {{-- <th>No.Telp</th> --}}
                                 <th>Jenis Pegawai</th>
                                 <th class="d-flex justify-content-center">Aksi</th>
                             </tr>
@@ -53,6 +53,7 @@
                             @foreach ($pegawai as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $data->kode_member }}</td>
                                     <td>{{ $data->plat_kendaraan }}</td>
                                     <td>{{ $data->nama }}</td>
                                     {{-- <td>{{ $data->no_telp }}</td> --}}

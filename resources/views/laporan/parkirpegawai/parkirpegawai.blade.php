@@ -46,6 +46,7 @@
                             <thead class="thead-light text-center">
                                 <tr>
                                     <th style="width: 5%;">No</th>
+                                    <th>Kode Pegawai</th>
                                     <th>Plat Kendaraan</th>
                                     <th>Nama Pegawai</th>
                                     <th>Tanggal</th>
@@ -56,6 +57,7 @@
                                 @forelse ($dataParkir as $data)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration }}</td>
+                                        <td class="text-center">{{ $data->kode_member }}</td>
                                         <td class="text-uppercase">{{ $data->plat_kendaraan }}</td>
                                         <td>{{ $data->pegawai->nama ?? '-' }}</td>
                                         <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>

@@ -20,8 +20,10 @@ class PegawaiController extends Controller
 
     public function submit(Request $request)
     {
+        // Validasi input (opsional, tambahkan sesuai kebutuhan)
+        // $request->validate([...]);
 
-        $pegawai                    = new Pegawai();
+        $pegawai = new Pegawai();
         $pegawai->plat_kendaraan    = $request->plat_kendaraan;
         $pegawai->nama              = $request->nama;
         $pegawai->no_telp           = $request->no_telp;
@@ -30,19 +32,23 @@ class PegawaiController extends Controller
         $pegawai->merk_kendaraan    = $request->merk_kendaraan;
         $pegawai->jenis_pegawai_id  = $request->jenis_pegawai;
 
-        // Jika ada file yang diunggah
+
+        $latestId = Pegawai::max('id') ?? 0;
+        $nextId = $latestId + 1;
+        $kodeMember = 'MBR-' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+        $pegawai->kode_member = $kodeMember;
+
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $path = $file->store('pegawai_images', 'public'); // Simpan ke folder "pegawai_images" di disk "public"
+            $path = $file->store('pegawai_images', 'public');
             $pegawai->image = $path;
         }
 
-        // Simpan data ke database
         $pegawai->save();
 
-        // Redirect dengan pesan sukses
-        return back()->with('success', 'Pegawai berhasil ditambahkan.');
+        return back()->with('success', 'Pegawai berhasil ditambahkan dengan Kode Member: ' . $kodeMember);
     }
+
 
     public function cetakPegawai($id)
     {
@@ -90,7 +96,7 @@ class PegawaiController extends Controller
             // Redirect dengan pesan error tanpa mencatat log
             return back()->with('error', 'Gagal memperbarui pegawai: ' . $e->getMessage());
         }
-    } 
+    }
 
     public function laporan(Request $request)
     {

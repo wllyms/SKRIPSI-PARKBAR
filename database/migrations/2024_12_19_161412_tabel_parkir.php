@@ -13,13 +13,25 @@ return new class extends Migration
     {
         Schema::create('parkir', function (Blueprint $table) {
             $table->id();
+
+            // Kolom baru untuk kode parkir otomatis 
+            $table->string('kode_parkir')->unique();
+
             $table->string('plat_kendaraan');
 
-            $table->foreignId('tarif_id')->constrained('tarif')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('user_id')->constrained('tuser')->cascadeOnDelete();
+            // Relasi ke tabel tarif
+            $table->foreignId('tarif_id')
+                ->constrained('tarif')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
-            $table->dateTime('waktu_masuk');            // gabungan tanggal + jam masuk
-            $table->dateTime('waktu_keluar')->nullable(); // gabungan tanggal + jam keluar, nullable karena kendaraan bisa belum keluar
+            // Relasi ke user petugas (misalnya tabel "tuser")
+            $table->foreignId('user_id')
+                ->constrained('tuser')
+                ->cascadeOnDelete();
+
+            $table->dateTime('waktu_masuk');
+            $table->dateTime('waktu_keluar')->nullable();
 
             $table->enum('status', ['Terparkir', 'Keluar'])->default('Terparkir');
 

@@ -26,15 +26,20 @@ class ParkirController extends Controller
     {
         $tarif = Tarif::all();
 
-        // Ambil data parkir dengan relasi tarif, urutkan berdasarkan waktu_masuk terbaru
+        // Ambil data parkir dengan relasi tarif, user, urutkan berdasarkan waktu_masuk terbaru
         $parkir = Parkir::with('tarif', 'user')
             ->orderBy('waktu_masuk', 'desc')
             ->get();
 
+        // Generate kode_parkir terbaru
+        $last = Parkir::orderBy('id', 'desc')->first();
+        $nextNumber = $last ? ((int)substr($last->kode_parkir, 2)) + 1 : 1;
+        $kodeParkir = 'KP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
         // Waktu sekarang sesuai timezone Makassar
         $jam = \Carbon\Carbon::now('Asia/Makassar')->format('H:i');
 
-        return view('manajemen-parkir.tampil', compact('tarif', 'parkir', 'jam'));
+        return view('manajemen-parkir.tampil', compact('tarif', 'parkir', 'jam', 'kodeParkir'));
     }
 
 
@@ -60,21 +65,27 @@ class ParkirController extends Controller
             'user_id' => 'required|exists:tuser,id',
         ]);
 
+        // Generate kode parkir otomatis
+        $last = Parkir::orderBy('id', 'desc')->first();
+        $nextNumber = $last ? ((int)substr($last->kode_parkir, 2)) + 1 : 1;
+        $kodeParkir = 'KP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+        // Simpan data parkir
         $parkir = new Parkir();
+        $parkir->kode_parkir = $kodeParkir; // baru ditambahkan
         $parkir->plat_kendaraan = $request->plat_kendaraan;
         $parkir->tarif_id = $request->jenis_tarif;
-        $parkir->waktu_masuk = now(); // langsung simpan sebagai datetime
-        $parkir->status = Parkir::STATUS_TERPARKIR;
         $parkir->user_id = $request->user_id;
+        $parkir->waktu_masuk = now();
+        $parkir->status = Parkir::STATUS_TERPARKIR; // pastikan konstanta ini didefinisikan di model Parkir
         $parkir->save();
 
-        // Jika ingin langsung cetak karcis sebagai PDF
-        // $parkir->load('tarif');
-        // $pdf = PDF::loadView('manajemen-parkir.cetak-parkir', compact('parkir'));
-        // return $pdf->download('karcis_' . $parkir->id . '.pdf');
+        // Redirect ke struk/cetak jika ingin
+        // return redirect()->route('parkir.struk', $parkir->id);
 
         return back()->with('success', 'Data Berhasil Ditambahkan');
     }
+
 
 
     public function keluar(Request $request, $id)
@@ -135,9 +146,16 @@ class ParkirController extends Controller
     {
         $decodedText = $request->input('decodedText');
 
+        if (!$decodedText) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data barcode tidak terbaca.',
+            ]);
+        }
+
         // Ambil data parkir yang belum keluar
         $parkir = Parkir::with('tarif.kategori')
-            ->where('plat_kendaraan', $decodedText)
+            ->where('kode_parkir', $decodedText)
             ->whereNull('waktu_keluar')
             ->latest()
             ->first();
@@ -145,53 +163,46 @@ class ParkirController extends Controller
         if (!$parkir) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data parkir tidak ditemukan',
+                'message' => 'Data parkir tidak ditemukan.',
             ]);
         }
 
-        if ($parkir->status === 'Keluar') {
+        if ($parkir->status === Parkir::STATUS_KELUAR) {
             return response()->json([
                 'success' => false,
-                'message' => 'Kendaraan sudah keluar sebelumnya',
+                'message' => 'Kendaraan sudah keluar sebelumnya.',
             ]);
         }
 
         $waktuKeluar = now();
 
-        // Validasi: waktu keluar tidak boleh sebelum masuk
         if ($waktuKeluar->lt($parkir->waktu_masuk)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Waktu keluar tidak boleh sebelum waktu masuk',
+                'message' => 'Waktu keluar tidak boleh sebelum waktu masuk.',
             ]);
         }
 
-        // Set default denda dan batas jam INAP
+        // Hitung durasi dan denda (jika INAP)
         $dendaTotal = 0;
         $batasJam = 48;
 
-        // Hitung denda hanya untuk tarif INAP
         if (strtoupper($parkir->tarif->jenis_tarif) === 'INAP') {
-            $durasiJam = $parkir->waktu_masuk->diffInHours($waktuKeluar);
+            $durasiMenit = $parkir->waktu_masuk->diffInMinutes($waktuKeluar);
+            $durasiJam = ceil($durasiMenit / 60);
 
             if ($durasiJam > $batasJam) {
                 $jamTerlambat = $durasiJam - $batasJam;
-
-                // Ambil kategori, normalisasi ke uppercase agar sama
                 $kategori = strtoupper($parkir->tarif->kategori->nama_kategori);
 
-                // Tarif denda per jam sesuai kategori
                 $tarifPerJam = ($kategori === 'RODA 2') ? 10000 : 20000;
-
-                // Hitung total denda
                 $dendaTotal = $jamTerlambat * $tarifPerJam;
             }
         }
 
-        // Update data parkir
+        // Simpan data parkir
         $parkir->waktu_keluar = $waktuKeluar;
-        $parkir->status = 'Keluar';
-        $parkir->denda = $dendaTotal; // simpan denda jika ada
+        $parkir->status = Parkir::STATUS_KELUAR;
         $parkir->save();
 
         // Simpan/update data denda jika ada
@@ -222,6 +233,7 @@ class ParkirController extends Controller
                 : 'Kendaraan berhasil keluar tanpa denda.'
         ]);
     }
+
 
 
     public function laporan(Request $request)
@@ -388,8 +400,6 @@ class ParkirController extends Controller
     {
         $tanggalHariIni = Carbon::today();
 
-        // Jumlah kendaraan yang masuk dan status 'Terparkir' hari ini (sesuai kartu 'Kendaraan Terparkir Hari Ini')
-        // Biasanya kita asumsikan yang "Terparkir hari ini" adalah yang masuk hari ini dan belum keluar (status Terparkir)
         $totalTerparkir = Parkir::whereDate('waktu_masuk', $tanggalHariIni)
             ->where('status', 'Terparkir')
             ->count();
@@ -406,8 +416,6 @@ class ParkirController extends Controller
             ->get()
             ->sum(fn($parkir) => $parkir->tarif->tarif ?? 0);
 
-        // (Optional) Total kendaraan yang masih terparkir secara keseluruhan, jika ingin pakai, tinggal tambahkan ke view
-        // $totalKendaraanTerparkir = Parkir::where('status', 'Terparkir')->count();
 
         return view('beranda', compact('totalTerparkir', 'totalKeluar', 'totalPendapatan'));
     }

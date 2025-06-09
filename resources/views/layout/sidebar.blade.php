@@ -32,7 +32,7 @@
     <li class="nav-item">
         <a class="nav-link" href="/jenispegawai">
             <i class="fa fa-users"></i>
-            <span>Jenis Pegawai</span>
+            <span>Kategori Pegawai</span>
         </a>
     </li>
     <hr class="sidebar-divider">
@@ -100,7 +100,7 @@
                 <a class="collapse-item" href="/laporan-parkirpegawai">Parkir Pegawai</a>
                 <a class="collapse-item" href="/laporan-pendapatan">Pendapatan</a>
                 <a class="collapse-item" href="/laporan-pengaduan">Pengaduan</a>
-                {{-- <a class="collapse-item" href="register.html">Laporan Pendapatan</a> --}}
+                <a class="collapse-item" href="/laporan-denda">Denda</a>
             </div>
         </div>
     </li>
@@ -148,7 +148,9 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img class="img-profile rounded-circle" src="{{ asset('tempe1/img/boy.png') }}"
                             style="max-width: 60px">
-                        <span class="ml-2 d-none d-lg-inline text-white small">{{ Auth::user()->staff->nama }}</span>
+                        <span class="ml-2 d-none d-lg-inline text-white small">
+                            {{ Auth::user()->staff->nama }} | {{ ucfirst(Auth::user()->role) }}
+                        </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                         aria-labelledby="userDropdown">

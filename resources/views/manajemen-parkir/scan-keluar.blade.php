@@ -52,7 +52,7 @@
                 }
             });
 
-            fetch('/prosess-scan-keluar', {
+            fetch('/proses-scan-keluar', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -99,7 +99,7 @@
                 <th>Foto Pegawai</th>
                 <th>Nama</th>
                 <th>No. Telp</th>
-                <th>Jenis Pegawai</th>
+                <th>Ketegori Pegawai</th>
             </tr>
         </thead>
         <tbody>

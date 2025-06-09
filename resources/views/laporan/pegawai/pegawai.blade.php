@@ -132,7 +132,7 @@
                         <div class="row mb-1">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="jenis_pegawai">Jenis Pegawai</label>
+                                    <label for="jenis_pegawai">Kategori Pegawai</label>
                                     <select class="form-control" name="jenis_pegawai" id="jenis_pegawai">
                                         <option value="">Semua</option>
                                         @foreach ($jenis_pegawai as $jenis)
@@ -176,7 +176,7 @@
                                 <th>Plat Kendaraan</th>
                                 <th>Nama</th>
                                 <th>No. Telp</th>
-                                <th>Jenis Pegawai</th>
+                                <th>Kategori Pegawai</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -202,7 +202,7 @@
                                     <div class="modal-dialog modal-xl" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header bg-primary">
-                                                <h5 class="modal-title text-white">Detail Peserta</h5>
+                                                <h5 class="modal-title text-white">Detail Pegawai</h5>
                                                 <button type="button" class="close text-white" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>

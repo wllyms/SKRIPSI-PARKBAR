@@ -62,7 +62,7 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        plat_kendaraan: decodedText
+                        kode_member: decodedText
                     })
                 })
                 .then(response => response.json())

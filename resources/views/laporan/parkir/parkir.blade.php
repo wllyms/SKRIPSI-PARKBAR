@@ -32,7 +32,7 @@
                                     </option>
                                 </select>
                             </div>
-                        </div> 
+                        </div>
                         <div class="d-flex justify-content-between mt-3">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-filter"></i> Terapkan Filter
@@ -60,6 +60,7 @@
                                     <th>Jenis Tarif</th>
                                     <th>Masuk</th>
                                     <th>Keluar</th>
+                                    <th>Petugas</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -78,6 +79,7 @@
                                         <td>
                                             {{ $data->waktu_keluar ? \Carbon\Carbon::parse($data->waktu_keluar)->format('H:i - d/m/Y') : '-' }}
                                         </td>
+                                        <td class="text-center">{{ $data->user->staff->nama ?? '-' }}</td>
                                         <td class="text-center">
                                             <span
                                                 class="badge badge-{{ $data->status === 'Terparkir' ? 'success' : 'secondary' }}">
@@ -93,7 +95,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> 
             </div>
         </div>
     </div>

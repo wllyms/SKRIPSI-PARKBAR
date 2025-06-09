@@ -19,19 +19,21 @@ class ParkirPegawaiController extends Controller
     public function submit(Request $request)
     {
         $request->validate([
-            'plat_kendaraan' => 'required|string',
+            'kode_member' => 'required|string',
         ]);
 
-        $pegawai = Pegawai::where('plat_kendaraan', $request->plat_kendaraan)->first();
+        // Cari pegawai berdasarkan kode_member
+        $pegawai = Pegawai::where('kode_member', $request->kode_member)->first();
 
         if (!$pegawai) {
             return response()->json([
                 'success' => false,
-                'message' => 'Pegawai dengan plat kendaraan ini tidak ditemukan.'
+                'message' => 'Pegawai dengan kode member ini tidak ditemukan.'
             ], 404);
         }
 
         ParkirPegawai::create([
+            'kode_member' => $pegawai->kode_member,
             'plat_kendaraan' => $pegawai->plat_kendaraan,
             'tanggal' => Carbon::now('Asia/Makassar')->format('Y-m-d'),
             'jam_masuk' => Carbon::now('Asia/Makassar')->format('H:i'),
@@ -41,7 +43,7 @@ class ParkirPegawaiController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Parkir pegawai berhasil dicatat.'
+            'message' => $pegawai->plat_kendaraan
         ]);
     }
 

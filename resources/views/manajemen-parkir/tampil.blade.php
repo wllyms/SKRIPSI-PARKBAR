@@ -42,6 +42,7 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>No</th>
+                                <th>Kode Parkir</th>
                                 <th>Plat Kendaraan</th>
                                 <th>Jenis Tarif</th>
                                 <th>Waktu Masuk</th>
@@ -55,6 +56,7 @@
                             @foreach ($parkir as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $data->kode_parkir }}</td>
                                     <td>{{ $data->plat_kendaraan }}</td>
                                     <td>
                                         {{ $data->tarif->jenis_tarif ?? '-' }} -

@@ -90,18 +90,20 @@
             <p>RS Bhayangkara Banjarmasin</p>
         </div>
         <div class="content">
+            <p><strong>Kode Member:</strong> {{ $pegawai->kode_member ?? '-' }}</p> <!-- Tambahan -->
             <p><strong>Plat Kendaraan:</strong> {{ $pegawai->plat_kendaraan ?? '-' }}</p>
             <p><strong>Nama:</strong> {{ $pegawai->nama ?? '-' }}</p>
             <p><strong>No Telp:</strong> {{ $pegawai->no_telp ?? '-' }}</p>
             <p><strong>Jenis Pegawai:</strong> {{ $pegawai->jenisPegawai->jenis_pegawai ?? '-' }}</p>
         </div>
         <div class="barcode">
-            @if (!empty($pegawai->plat_kendaraan))
+            @if (!empty($pegawai->kode_member))
                 @php
                     $generator = new \Picqer\Barcode\BarcodeGeneratorHTML();
-                    $barcode = $generator->getBarcode($pegawai->plat_kendaraan, $generator::TYPE_CODE_128);
+                    $barcode = $generator->getBarcode($pegawai->kode_member, $generator::TYPE_CODE_128);
                 @endphp
                 {!! $barcode !!}
+                <div><small>{{ $pegawai->kode_member }}</small></div> <!-- Tambahkan kode di bawah barcode -->
             @else
                 <p>Barcode tidak tersedia</p>
             @endif

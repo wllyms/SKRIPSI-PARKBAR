@@ -21,7 +21,7 @@ class SesiController extends Controller
 
         if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
-            return redirect()->intended('/beranda');
+            return redirect()->intended('/beranda')->with('success', 'Selamat datang kembali, ' . auth()->user()->staff->nama . '!');
         }
 
         return back()->withErrors([

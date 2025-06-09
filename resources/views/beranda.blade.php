@@ -80,6 +80,7 @@
 
     <!-- Script untuk Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         var ctx = document.getElementById('chartKendaraan').getContext('2d');
         var chartKendaraan = new Chart(ctx, {
@@ -115,5 +116,17 @@
             }
         });
     </script>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Berhasil!',
+                text: '{{ session('success') }}',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
 
 @endsection

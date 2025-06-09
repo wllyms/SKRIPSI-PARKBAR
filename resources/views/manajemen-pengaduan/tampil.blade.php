@@ -47,7 +47,7 @@
                 <div class="table-responsive p-3">
                     <table class="table align-items-center table-flush" id="dataTable">
                         <thead class="thead-light">
-                            <tr>
+                            <tr> 
                                 <th>No</th>
                                 <th>Nama</th>
                                 <th>Tanggal & Waktu Lapor</th>

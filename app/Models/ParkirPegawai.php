@@ -12,6 +12,7 @@ class ParkirPegawai extends Model
     protected $table = 'parkir_pegawai';
 
     protected $fillable = [
+        'kode_member',
         'plat_kendaraan',
         'tanggal',
         'jam_masuk',

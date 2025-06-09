@@ -94,7 +94,7 @@ Route::delete('/laporan-pengunjung/{id}', [LaporanPengunjungController::class, '
 
 
 // SCAN PARKIR BIASA
-Route::post('/prosess-scan-keluar', [ParkirController::class, 'prosesScanKeluar'])->name('proses.scan.keluar');
+Route::post('/proses-scan-keluar', [ParkirController::class, 'prosesScanKeluar'])->name('proses.scan.keluar');
 Route::get('/parkir-keluar', [ParkirController::class, 'scanKeluar'])->name('manajemen-parkir.scan-keluar');
 
 
@@ -133,3 +133,8 @@ Route::get('/laporan/pegawai/cetak', [ParkirPegawaiController::class, 'cetakLapo
 // LAPORAN PENGADUAN
 Route::get('/laporan-pengaduan', [LaporanPengunjungController::class, 'laporan'])->name('laporan.pengaduan');
 Route::get('/laporan/pengaduan/cetak', [LaporanPengunjungController::class, 'cetak'])->name('laporan.pengaduan.cetak');
+
+
+// LAPORAN DENDA
+Route::get('/laporan-denda', [DendaController::class, 'laporanDenda'])->name('laporan.denda');
+Route::get('/laporan/denda/cetak', [DendaController::class, 'cetak'])->name('laporan.denda.cetak');

@@ -1,7 +1,7 @@
 @extends('layout.main')
 
-@section('pagename', 'JENIS PEGAWAI')
-@section('title', 'ParkBar - Jenis Pegawai')
+@section('pagename', 'KATEGORI PEGAWAI')
+@section('title', 'ParkBar - Kategori Pegawai')
 @section('content')
 
     <div class="row">
@@ -28,7 +28,7 @@
                     @endif
                 </div>
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Data Jenis Pegawai</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Data Kategori Pegawai</h6>
                     <div>
                         <!-- Button Modal -->
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahModal">
@@ -41,7 +41,7 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>No</th>
-                                <th>Jenis Pegawai</th>
+                                <th>Kategori Pegawai</th>
                                 <th class="d-flex justify-content-center">Aksi</th>
                             </tr>
                         </thead>

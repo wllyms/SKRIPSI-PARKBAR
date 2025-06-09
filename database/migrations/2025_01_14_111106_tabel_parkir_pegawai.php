@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('parkir_pegawai', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_member');
             $table->string('plat_kendaraan');
             $table->date('tanggal');
             $table->time('jam_masuk')->nullable();
