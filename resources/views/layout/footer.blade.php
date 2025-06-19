@@ -36,6 +36,22 @@
         $("#dataTable").DataTable(); // ID From dataTable
     });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const iconToggle = document.getElementById('iconToggle');
+
+        toggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            iconToggle.classList.toggle('fa-eye');
+            iconToggle.classList.toggle('fa-eye-slash');
+        });
+    });
+</script>
+
 </body>
 
 </html>

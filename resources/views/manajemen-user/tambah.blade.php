@@ -16,21 +16,28 @@
                         <label for="username">Username</label>
                         <input type="text" class="form-control" name="username" id="username" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group position-relative">
                         <label for="password">Password</label>
-                        <input type="text" class="form-control" name="password" id="password" required>
+                        <div class="input-group">
+                            <input type="password" class="form-control" name="password" id="password" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye" id="iconToggle"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="role">Role</label>
                         <select class="form-control" name="role" id="role" required>
                             <option value="" disabled selected>-- Pilih Role --</option>
                             <option value="admin">Admin</option>
-                            <option value="super admin">Super Admin</option>
+                            <option value="super_admin">Super Admin</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="staff">Staff</label>
-                        <select class="form-control" name="staff" id="staff">
+                        <select class="form-control" name="staff_id" id="staff_id">
                             <option value="" disabled>-- Pilih Staff --</option>
                             @foreach ($staff as $data)
                                 <option value="{{ $data->id }}">

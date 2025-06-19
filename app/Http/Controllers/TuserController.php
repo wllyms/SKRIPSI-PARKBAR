@@ -23,7 +23,7 @@ class TuserController extends Controller
         $user->username  = $request->username;
         $user->password  = Hash::make($request->password); // Hash password
         $user->role      = $request->role;
-        $user->staff_id  = $request->staff;
+        $user->staff_id  = $request->staff_id;
         $user->save();
 
         // Set pesan sukses

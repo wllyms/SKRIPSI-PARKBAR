@@ -9,6 +9,7 @@ use App\Models\Parkir;
 use App\Models\Pegawai;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use App\Models\ParkirPegawai;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
@@ -396,27 +397,58 @@ class ParkirController extends Controller
         }
     }
 
+
     public function dashboard()
     {
         $tanggalHariIni = Carbon::today();
 
+        // Kendaraan non-pegawai
         $totalTerparkir = Parkir::whereDate('waktu_masuk', $tanggalHariIni)
             ->where('status', 'Terparkir')
             ->count();
 
-        // Jumlah kendaraan yang keluar hari ini
         $totalKeluar = Parkir::whereDate('waktu_keluar', $tanggalHariIni)
             ->where('status', 'Keluar')
             ->count();
 
-        // Total pendapatan hari ini (dari kendaraan yang keluar hari ini)
         $totalPendapatan = Parkir::whereDate('waktu_keluar', $tanggalHariIni)
             ->where('status', 'Keluar')
             ->with('tarif')
             ->get()
             ->sum(fn($parkir) => $parkir->tarif->tarif ?? 0);
 
+        // Total denda hari ini
+        $totalDenda = Denda::whereDate('tanggal', $tanggalHariIni)
+            ->sum('nominal');
 
-        return view('beranda', compact('totalTerparkir', 'totalKeluar', 'totalPendapatan'));
+        // Kendaraan pegawai terparkir hari ini
+        $kendaraanPegawaiTerparkir = ParkirPegawai::whereDate('tanggal', $tanggalHariIni)
+            ->where('status', 'Terparkir')
+            ->count();
+
+        // Data tren kendaraan non-pegawai minggu ini
+        $startOfWeek = Carbon::now()->startOfWeek(); // Senin
+        $endOfWeek = Carbon::now()->endOfWeek();     // Minggu
+
+        $labelsHariMingguIni = [];
+        $dataMasukMingguIni = [];
+        $dataKeluarMingguIni = [];
+
+        for ($date = $startOfWeek->copy(); $date->lte($endOfWeek); $date->addDay()) {
+            $labelsHariMingguIni[] = $date->format('D'); // Sen, Sel, Rab, ...
+            $dataMasukMingguIni[] = Parkir::whereDate('waktu_masuk', $date->toDateString())->count();
+            $dataKeluarMingguIni[] = Parkir::whereDate('waktu_keluar', $date->toDateString())->count();
+        }
+
+        return view('beranda', compact(
+            'totalTerparkir',
+            'totalKeluar',
+            'totalPendapatan',
+            'totalDenda',
+            'kendaraanPegawaiTerparkir',
+            'labelsHariMingguIni',
+            'dataMasukMingguIni',
+            'dataKeluarMingguIni'
+        ));
     }
 }

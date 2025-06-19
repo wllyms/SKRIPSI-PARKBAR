@@ -9,6 +9,7 @@
         "barryvdh/laravel-dompdf": "^3.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "mckenziearts/laravel-notify": "^2.7",
         "picqer/php-barcode-generator": "^3.2"
     },
     "require-dev": {

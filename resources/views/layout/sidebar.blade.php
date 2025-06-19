@@ -2,49 +2,59 @@
 <ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center bg-gradient-primary" href="#">
         <div class="sidebar-brand-icon">
-            <img src="{{ asset('tempe1/img/logo/baru.png') }}" style="width: 55px; height: 100px ">
+            <!-- Gunakan max-height untuk menjaga konsistensi tampilan -->
+            <img src="{{ asset('tempe1/img/logo/baru.png') }}" style="width: 55px; max-height: 60px;">
         </div>
-
         <div class="sidebar-brand-text mx-3">PARKBARA</div>
     </a>
     <hr class="sidebar-divider my-0">
     <li class="nav-item active">
         <a class="nav-link" href="/beranda">
             <i class="fas fa-warehouse"></i>
-            <span>Dashboard</span></a>
-    </li>
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">
-        Data Master
-    </div>
-    <li class="nav-item">
-        <a class="nav-link" href="/kategori">
-            <i class="fa fa-car"></i>
-            <span>Kategori Kendaraan</span>
+            <span>Dashboard</span>
         </a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/staff">
-            <i class="fa fa-user"></i>
-            <span>Staff</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/jenispegawai">
-            <i class="fa fa-users"></i>
-            <span>Kategori Pegawai</span>
-        </a>
-    </li>
+
+    @if (Auth::check() && Auth::user()->role == 'super_admin')
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">
+            Data Master
+        </div>
+        <li class="nav-item">
+            <a class="nav-link" href="/kategori">
+                <i class="fa fa-car"></i>
+                <span>Kategori Kendaraan</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/staff">
+                <i class="fa fa-user"></i>
+                <span>Staff</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/jenispegawai">
+                <i class="fa fa-users"></i>
+                <span>Kategori Pegawai</span>
+            </a>
+        </li>
+    @endif
+
     <hr class="sidebar-divider">
     <div class="sidebar-heading">
         PARKING
     </div>
-    <li class="nav-item">
-        <a class="nav-link" href="/user">
-            <i class="fas fa-user-alt"></i>
-            <span>User</span>
-        </a>
-    </li>
+
+    @if (Auth::check() && Auth::user()->role == 'super_admin')
+        <li class="nav-item">
+            <a class="nav-link" href="/user">
+                <i class="fas fa-user-alt"></i>
+                <span>User</span>
+            </a>
+        </li>
+    @endif
+
+
     <li class="nav-item">
         <a class="nav-link" href="/tarif">
             <i class="fas fa-money-bill-wave fa-chart-area"></i>
@@ -109,12 +119,10 @@
 </ul>
 <!-- END SIDEBAR -->
 
-
+<!-- CONTENT WRAPPER -->
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
-
         <!-- NAVBAR -->
-
         <!-- Logout Modal-->
         <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
             aria-hidden="true">
@@ -126,7 +134,9 @@
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <div class="modal-body">Klik logout untuk mengakhiri sesi Anda.</div>
+                    <div class="modal-body">
+                        Klik logout untuk mengakhiri sesi Anda.
+                    </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
@@ -149,7 +159,8 @@
                         <img class="img-profile rounded-circle" src="{{ asset('tempe1/img/boy.png') }}"
                             style="max-width: 60px">
                         <span class="ml-2 d-none d-lg-inline text-white small">
-                            {{ Auth::user()->staff->nama }} | {{ ucfirst(Auth::user()->role) }}
+                            {{ Auth::user()->staff->nama ?? 'Nama tidak tersedia' }} |
+                            {{ ucfirst(Auth::user()->role ?? '') }}
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -165,3 +176,5 @@
             </ul>
         </nav>
         <!-- END NAVBAR -->
+
+        <!-- Konten lainnya di sini -->
