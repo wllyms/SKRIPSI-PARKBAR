@@ -88,8 +88,8 @@ class LaporanPengunjungController extends Controller
     public function laporan(Request $request)
     {
 
-        $tanggalMulai = $request->tanggal_mulai ?? now()->startOfMonth()->toDateString();
-        $tanggalSelesai = $request->tanggal_selesai ?? now()->endOfMonth()->toDateString();
+        $tanggalMulai = $request->tanggal_mulai ?? now()->today()->toDateString();
+        $tanggalSelesai = $request->tanggal_selesai ?? now()->toDateString();
 
         $laporan = LaporanPengunjung::whereBetween('waktu_lapor', [$tanggalMulai . ' 00:00:00', $tanggalSelesai . ' 23:59:59'])
             ->orderBy('waktu_lapor', 'desc')

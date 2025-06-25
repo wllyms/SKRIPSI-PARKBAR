@@ -92,9 +92,9 @@
             <tr>
                 <th>No</th>
                 <th>Plat Kendaraan</th>
+                <th>Nama Pegawai</th>
                 <th>Tanggal</th>
                 <th>Jam Masuk</th>
-                <th>Nama Pegawai</th>
             </tr>
         </thead>
         <tbody>
@@ -102,9 +102,9 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $data->plat_kendaraan }}</td>
+                    <td>{{ $data->pegawai->nama }}</td>
                     <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
                     <td>{{ $data->jam_masuk ? \Carbon\Carbon::parse($data->jam_masuk)->format('H:i') : '-' }}</td>
-                    <td>{{ $data->pegawai->nama }}</td>
                 </tr>
             @empty
                 <tr>

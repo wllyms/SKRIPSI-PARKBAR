@@ -72,7 +72,7 @@ class PegawaiController extends Controller
             $pegawai->email             = $request->email;
             $pegawai->alamat            = $request->alamat;
             $pegawai->merk_kendaraan    = $request->merk_kendaraan;
-            $pegawai->jenis_pegawai_id  = $request->jenis_pegawai;
+            $pegawai->jenis_pegawai_id = $request->jenis_pegawai_id;
 
             // Jika ada file gambar baru yang diunggah
             if ($request->hasFile('image')) {

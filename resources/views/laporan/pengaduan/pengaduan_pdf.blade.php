@@ -89,8 +89,8 @@
             <tr>
                 <th>No</th>
                 <th>Nama</th>
-                <th>No Telp</th>
                 <th>Waktu Lapor</th>
+                <th>No Telp</th>
                 <th>Keterangan</th>
                 <th>Petugas</th>
             </tr>
@@ -100,8 +100,8 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->nama }}</td>
-                    <td>{{ $item->no_telp }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->waktu_lapor)->format('d-m-Y H:i') }}</td>
+                    <td>{{ $item->no_telp }}</td>
                     <td>{{ $item->keterangan }}</td>
                     <td>{{ $item->user->staff->nama ?? '-' }}</td>
                 </tr>

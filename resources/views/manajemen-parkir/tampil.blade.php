@@ -48,7 +48,6 @@
                                 <th>Waktu Masuk</th>
                                 <th>Waktu Keluar</th>
                                 <th>Status</th>
-                                <th>Petugas</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -78,7 +77,6 @@
                                             <span class="badge badge-success">Keluar</span>
                                         @endif
                                     </td>
-                                    <td>{{ $data->user->staff->nama ?? '-' }}</td>
                                     <td class="text-center">
                                         {{-- Cetak Barcode --}}
                                         <a class="btn btn-info btn-sm text-white"

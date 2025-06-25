@@ -117,8 +117,8 @@
             <tr>
                 <th>No</th>
                 <th>Plat Kendaraan</th>
-                <th>Jam Masuk</th>
-                <th>Jam Keluar</th>
+                <th>Waktu Masuk</th>
+                <th>Waktu Keluar</th>
                 <th class="text-right">Tarif Parkir</th>
                 <th class="text-right">Denda</th>
                 <th class="text-right">Total</th>

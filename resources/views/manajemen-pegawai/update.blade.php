@@ -48,17 +48,18 @@
                                 value="{{ old('merk_kendaraan', $data->merk_kendaraan) }}">
                         </div>
                         <div class="form-group">
-                            <label for="jenis_pegawai">Jenis Pegawai</label>
-                            <select class="form-control" name="jenis_pegawai" id="jenis_pegawai" required>
-                                <option value="">-- Pilih Jenis Pegawai --</option>
+                            <label for="jenis_pegawai">Kategori Pegawai</label>
+                            <select class="form-control" name="jenis_pegawai_id" id="jenis_pegawai" required>
+                                <option value="">-- Pilih Kategori Pegawai --</option>
                                 @foreach ($jenis_pegawai as $data)
                                     <option value="{{ $data->id }}"
-                                        {{ $data->id == $data->jenis_pegawai_id ? 'selected' : '' }}>
+                                        {{ old('jenis_pegawai_id') == $data->id || (isset($pegawai) && $data->jenis_pegawai_id == $data->id) ? 'selected' : '' }}>
                                         {{ $data->jenis_pegawai }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="form-group">
                             <label for="image">Foto Profil</label>
                             <input type="file" name="image" class="form-control-file" id="image">

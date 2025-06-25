@@ -42,9 +42,9 @@
                             placeholder="Masukkan Merk Kendaraan">
                     </div>
                     <div class="form-group">
-                        <label for="jenis_pegawai">Jenis Pegawai</label>
+                        <label for="jenis_pegawai">Kategori Pegawai</label>
                         <select class="form-control" name="jenis_pegawai" id="jenis_pegawai" required>
-                            <option value="">-- Pilih Jenis Pegawai --</option>
+                            <option value="">-- Pilih kategori Pegawai --</option>
                             @foreach ($jenis_pegawai as $data)
                                 <option value="{{ $data->id }}">{{ $data->jenis_pegawai }}</option>
                             @endforeach

@@ -64,10 +64,13 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     Route::delete('/laporan-pengunjung/{id}', [LaporanPengunjungController::class, 'delete'])->name('manajemen-pengaduan.delete');;
 
 
-
     // SCAN PARKIR BIASA
     Route::post('/proses-scan-keluar', [ParkirController::class, 'prosesScanKeluar'])->name('proses.scan.keluar');
     Route::get('/parkir-keluar', [ParkirController::class, 'scanKeluar'])->name('manajemen-parkir.scan-keluar');
+
+
+    // CETAK STRUK PARKIR
+    Route::get('/cetak-struk/{id}', [ParkirController::class, 'cetakStruk'])->name('parkir.cetak-struk');
 
 
     // SCAN PEGAWAI 
@@ -78,7 +81,6 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     // CETAK STRUK PARKIR DAN ID CARD PEGAWAI
     Route::get('/parkir/cetak-pdf/{id}', [ParkirController::class, 'cetakParkir'])->name('manajemen-parkir.cetak-parkir');
     Route::get('/pegawai/cetak-pdf{id}', [PegawaiController::class, 'cetakPegawai'])->name('manajemen-pegawai.detailpegawai');
-
 
 
     // LAPORAN DAN CETAK PARKIR

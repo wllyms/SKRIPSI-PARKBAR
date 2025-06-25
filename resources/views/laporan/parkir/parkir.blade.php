@@ -58,8 +58,8 @@
                                     <th>No</th>
                                     <th>Plat Kendaraan</th>
                                     <th>Jenis Tarif</th>
-                                    <th>Masuk</th>
-                                    <th>Keluar</th>
+                                    <th>Waktu Masuk</th>
+                                    <th>Waktu Keluar</th>
                                     <th>Petugas</th>
                                     <th>Status</th>
                                 </tr>
@@ -95,7 +95,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
     </div>

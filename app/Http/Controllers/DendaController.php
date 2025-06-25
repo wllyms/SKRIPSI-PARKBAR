@@ -54,8 +54,8 @@ class DendaController extends Controller
 
     public function laporanDenda(Request $request)
     {
-        $tanggalMulai = $request->tanggal_mulai ?? Carbon::now()->startOfMonth()->format('Y-m-d');
-        $tanggalSelesai = $request->tanggal_selesai ?? Carbon::now()->endOfMonth()->format('Y-m-d');
+        $tanggalMulai = $request->tanggal_mulai ?? Carbon::now()->today()->format('Y-m-d');
+        $tanggalSelesai = $request->tanggal_selesai ?? Carbon::now()->format('Y-m-d');
 
         $query = Denda::with(['parkir.user.staff', 'parkir.tarif.kategori'])
             ->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai]);

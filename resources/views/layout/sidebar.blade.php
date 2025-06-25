@@ -52,15 +52,14 @@
                 <span>User</span>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/tarif">
+                <i class="fas fa-money-bill-wave fa-chart-area"></i>
+                <span>Tarif Parkir</span>
+            </a>
+        </li>
     @endif
-
-
-    <li class="nav-item">
-        <a class="nav-link" href="/tarif">
-            <i class="fas fa-money-bill-wave fa-chart-area"></i>
-            <span>Tarif Parkir</span>
-        </a>
-    </li>
     <li class="nav-item">
         <a class="nav-link" href="/pegawai">
             <i class="fas fa-users"></i>

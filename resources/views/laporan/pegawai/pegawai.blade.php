@@ -159,18 +159,20 @@
 
         <!-- Tabel Laporan Pegawai -->
         <div class="col-lg-12">
-            <div class="card mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <!-- Tombol Cetak Laporan -->
+            <div class="card mb-4 shadow-sm">
+                <!-- Header Judul dan Tombol Cetak -->
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 text-primary">Laporan Data Pegawai</h5>
                     <a href="{{ route('laporan.pegawai.cetak', ['jenis_pegawai' => request('jenis_pegawai')]) }}"
-                        target="_blank" class="btn btn-success mb-4">
-                        <i class="fas fa-file-pdf"></i> Cetak
+                        target="_blank" class="btn btn-success">
+                        <i class="fas fa-file-pdf"></i> Cetak PDF
                     </a>
-
                 </div>
+
+                <!-- Tabel Data -->
                 <div class="table-responsive p-3">
                     <table class="table table-striped table-bordered" id="dataTable" style="margin-top: 20px;">
-                        <thead class="thead-light">
+                        <thead class="thead-light text-center">
                             <tr>
                                 <th>No</th>
                                 <th>Plat Kendaraan</th>
@@ -187,7 +189,7 @@
                                     <td>{{ $data->plat_kendaraan }}</td>
                                     <td>{{ $data->nama }}</td>
                                     <td>{{ $data->no_telp }}</td>
-                                    <td>{{ $data->jenisPegawai->jenis_pegawai }}</td>
+                                    <td>{{ $data->jenisPegawai->jenis_pegawai ?? '-' }}</td>
                                     <td>
                                         <button class="btn btn-info btn-sm" data-toggle="modal"
                                             data-target="#detailModal{{ $data->id }}">
@@ -196,7 +198,7 @@
                                     </td>
                                 </tr>
 
-                                {{-- Modal Detail --}}
+                                <!-- Modal Detail Pegawai -->
                                 <div class="modal fade" id="detailModal{{ $data->id }}" tabindex="-1" role="dialog"
                                     aria-labelledby="tambahModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-xl" role="document">
@@ -208,17 +210,18 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
+
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-4 text-center">
                                                         @if ($data->image)
                                                             <img src="{{ asset('storage/' . $data->image) }}"
-                                                                alt="Foto Peserta" class="img-fluid rounded shadow">
+                                                                alt="Foto Pegawai" class="img-fluid rounded shadow">
                                                         @else
                                                             <p><em>Tidak ada foto yang diunggah</em></p>
                                                         @endif
                                                     </div>
-                                                    <div class="col-md-8 details">
+                                                    <div class="col-md-8">
                                                         <p><strong>Nama Lengkap:</strong> {{ $data->nama }}</p>
                                                         <p><strong>Plat Kendaraan:</strong> {{ $data->plat_kendaraan }}</p>
                                                         <p><strong>No Telp:</strong> {{ $data->no_telp }}</p>
@@ -228,10 +231,11 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="modal-footer">
                                                 <a href="{{ route('laporan.detailpegawai.cetak', $data->id) }}"
-                                                    target="_blank" class="btn btn-primary float-end">
-                                                    <span class="tf-icons bx bx-printer"></span> Cetak
+                                                    target="_blank" class="btn btn-primary">
+                                                    <i class="fas fa-print"></i> Cetak
                                                 </a>
                                             </div>
                                         </div>
@@ -243,5 +247,6 @@
                 </div>
             </div>
         </div>
+
     </div>
 @endsection

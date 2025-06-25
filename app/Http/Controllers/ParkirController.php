@@ -235,6 +235,18 @@ class ParkirController extends Controller
         ]);
     }
 
+    public function cetakStruk($id)
+    {
+        $parkir = Parkir::with(['tarif.kategori', 'denda', 'petugas']) // opsional jika ada relasi ke petugas
+            ->findOrFail($id);
+
+        $tarif = $parkir->tarif->tarif ?? 0;
+        $denda = $parkir->denda->nominal ?? 0;
+        $total = $tarif + $denda;
+
+        return view('parkir.struk', compact('parkir', 'tarif', 'denda', 'total'));
+    }
+
 
 
     public function laporan(Request $request)
@@ -307,8 +319,13 @@ class ParkirController extends Controller
     public function laporanPendapatan(Request $request)
     {
         // Ambil input filter tanggal mulai dan selesai
-        $tanggalMulai = $request->input('tanggal_mulai') ? Carbon::parse($request->input('tanggal_mulai')) : Carbon::now()->startOfMonth();
-        $tanggalSelesai = $request->input('tanggal_selesai') ? Carbon::parse($request->input('tanggal_selesai')) : Carbon::now()->endOfMonth();
+        $tanggalMulai = $request->input('tanggal_mulai')
+            ? Carbon::parse($request->input('tanggal_mulai'))
+            : Carbon::today();
+
+        $tanggalSelesai = $request->input('tanggal_selesai')
+            ? Carbon::parse($request->input('tanggal_selesai'))
+            : Carbon::today();
 
         // Ambil filter jenis tarif (boleh kosong = semua)
         $jenisTarif = $request->input('jenis_tarif');
@@ -364,21 +381,49 @@ class ParkirController extends Controller
         [$tanggalMulai, $tanggalSelesai] = $this->getValidatedDates($request);
         $jenisTarif = $request->input('jenis_tarif', null);
 
-        $query = Parkir::with('tarif')->whereBetween('waktu_keluar', [$tanggalMulai, $tanggalSelesai]);
+        // Ambil data parkir sesuai filter
+        $query = Parkir::with(['tarif', 'denda'])
+            ->where('status', 'Keluar')
+            ->whereBetween('waktu_keluar', [$tanggalMulai->startOfDay(), $tanggalSelesai->endOfDay()]);
 
         if ($jenisTarif) {
-            $query->whereHas('tarif', function ($query) use ($jenisTarif) {
-                $query->where('jenis_tarif', $jenisTarif);
+            $query->whereHas('tarif', function ($q) use ($jenisTarif) {
+                $q->where('jenis_tarif', $jenisTarif);
             });
         }
 
         $dataParkir = $query->get();
-        $totalPendapatan = $dataParkir->sum(fn($item) => $item->tarif->tarif ?? 0);
 
-        $pdf = PDF::loadView('laporan.pendapatan.pendapatan_pdf', compact('dataParkir', 'tanggalMulai', 'tanggalSelesai', 'jenisTarif', 'totalPendapatan'));
+        // Hitung tarif parkir
+        $pendapatanMurni = $dataParkir->sum(fn($item) => $item->tarif->tarif ?? 0);
+
+        // Hitung total denda yang sudah dibayar
+        $pendapatanDenda = Denda::where('status', 'Sudah Dibayar')
+            ->whereBetween('tanggal', [$tanggalMulai->startOfDay(), $tanggalSelesai->endOfDay()])
+            ->when($jenisTarif, function ($q) use ($jenisTarif) {
+                $q->whereHas('parkir.tarif', function ($q2) use ($jenisTarif) {
+                    $q2->where('jenis_tarif', $jenisTarif);
+                });
+            })
+            ->sum('nominal');
+
+        // Total pendapatan (tarif + denda)
+        $totalPendapatan = $pendapatanMurni + $pendapatanDenda;
+
+        // Load ke PDF view
+        $pdf = PDF::loadView('laporan.pendapatan.pendapatan_pdf', compact(
+            'dataParkir',
+            'tanggalMulai',
+            'tanggalSelesai',
+            'jenisTarif',
+            'pendapatanMurni',
+            'pendapatanDenda',
+            'totalPendapatan'
+        ));
 
         return $pdf->stream('laporan-pendapatan-' . $tanggalMulai->format('Y-m-d') . '-sampai-' . $tanggalSelesai->format('Y-m-d') . '-jenis-tarif-' . ($jenisTarif ?? 'semua') . '.pdf');
     }
+
 
     public function delete($id)
     {

@@ -69,13 +69,13 @@
                                         {{-- Edit Pegawai --}}
                                         <button class="btn btn-warning btn-sm text-white mr-1" data-toggle="modal"
                                             data-target="#editModal{{ $data->id }}" title="Edit Data Pegawai">
-                                            <i class="fas fa-edit"></i> Edit
+                                            <i class="fas fa-edit"></i>
                                         </button>
 
                                         {{-- Hapus Pegawai --}}
                                         <button class="btn btn-danger btn-sm text-white" data-toggle="modal"
                                             data-target="#deleteModal{{ $data->id }}" title="Hapus Data Pegawai">
-                                            <i class="fas fa-trash-alt"></i> Hapus
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
 

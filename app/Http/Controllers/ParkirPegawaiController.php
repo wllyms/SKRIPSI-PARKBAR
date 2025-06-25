@@ -49,7 +49,7 @@ class ParkirPegawaiController extends Controller
 
     public function laporan(Request $request)
     {
-        $tanggalMulai = $request->input('tanggal_mulai', now()->startOfMonth()->toDateString());
+        $tanggalMulai = $request->input('tanggal_mulai', now()->today()->toDateString());
         $tanggalSelesai = $request->input('tanggal_selesai', now()->toDateString());
 
         $dataParkir = ParkirPegawai::with('pegawai')
