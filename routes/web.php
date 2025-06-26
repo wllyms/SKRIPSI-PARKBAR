@@ -97,8 +97,6 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     Route::get('/laporan/pegawai/detail/cetak/{id}', [PegawaiController::class, 'cetakDetailPegawai'])->name('laporan.detailpegawai.cetak');
 
 
-
-
     // LAPORAN DAN CETAK PENDAPATAN
     Route::get('/laporan-pendapatan', [ParkirController::class, 'laporanPendapatan'])->name('laporan.pendapatan');
     Route::get('/laporan-pendapatan/cetak', [ParkirController::class, 'cetakPendapatan'])->name('laporan.pendapatan.cetak');
@@ -165,6 +163,6 @@ Route::middleware(['role:super_admin'])->group(function () {
 
 
     // RIWAYAT PEGAWAI
-    Route::get('/pegawai/riwayat/{id}', [PegawaiController::class, 'riwayat'])->name('manajemen-pegawai.riwayat');
-    Route::post('/pegawai/riwayat/{id}', [PegawaiController::class, 'TambahRiwayat'])->name('manajemen-pegawai.riwayat.tambah');
+    Route::get('/pegawai/{id}/riwayat/create', [PegawaiController::class, 'formRiwayat'])->name('pegawai.riwayat.create');
+    Route::post('/pegawai/{id}/riwayat', [PegawaiController::class, 'TambahRiwayat'])->name('pegawai.riwayat.store');
 });

@@ -22,7 +22,7 @@ class Pegawai extends Model
         'sub_jabatan_id'
     ];
 
-    public function jabatan() 
+    public function jabatan()
     {
         return $this->belongsTo(Jabatan::class);
     }
@@ -32,16 +32,16 @@ class Pegawai extends Model
         return $this->belongsTo(SubJabatan::class, 'sub_jabatan_id');
     }
 
-    // Untuk riwayat mutasi (optional jika kamu pakai pivot)
+    // Relasi pivot dengan nama tabel dan kolom foreign key disebutkan eksplisit
     public function riwayatSubJabatans()
     {
-        return $this->belongsToMany(SubJabatan::class, 'pegawai_sub_jabatan')
+        return $this->belongsToMany(SubJabatan::class, 'pegawai_sub_jabatan', 'pegawai_id', 'sub_jabatan_id')
             ->withPivot(['tanggal_mulai', 'tanggal_selesai', 'keterangan'])
             ->withTimestamps();
     }
 
-    public function parkirpegawai(): HasMany // One to Many relasi
+    public function parkirpegawai(): HasMany
     {
-        return $this->hasMany(ParkirPegawai::class, 'pegawai_id', 'id');;
+        return $this->hasMany(ParkirPegawai::class, 'pegawai_id', 'id');
     }
 }

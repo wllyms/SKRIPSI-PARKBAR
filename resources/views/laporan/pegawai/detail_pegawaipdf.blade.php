@@ -39,6 +39,8 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            margin-bottom: 40px;
+            /* ✅ Tambahkan jarak bawah antar tabel */
         }
 
         table th,
@@ -69,6 +71,11 @@
         h3 {
             margin-top: 40px;
             color: #007bff;
+        }
+
+        .page-break {
+            page-break-before: always;
+            /* ✅ Cetak mulai halaman baru */
         }
     </style>
 </head>
@@ -118,34 +125,36 @@
 
     <!-- Tabel Riwayat Sub Jabatan -->
     @if ($data->riwayatSubJabatans && $data->riwayatSubJabatans->count())
-        <h3>Riwayat Sub Jabatan</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Sub Jabatan</th>
-                    <th>Tanggal Mulai</th>
-                    <th>Tanggal Selesai</th>
-                    <th>Keterangan</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($data->riwayatSubJabatans as $index => $riwayat)
+        <div class="page-break">
+            <h3>Riwayat Sub Jabatan</h3>
+            <table>
+                <thead>
                     <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
-                        <td>{{ $riwayat->nama_sub_jabatan }}</td>
-                        <td>{{ \Carbon\Carbon::parse($riwayat->pivot->tanggal_mulai)->format('d-m-Y') }}</td>
-                        <td>
-                            {{ $riwayat->pivot->tanggal_selesai
-                                ? \Carbon\Carbon::parse($riwayat->pivot->tanggal_selesai)->format('d-m-Y')
-                                : '-' }}
-                        </td>
-                        <td>{{ $riwayat->pivot->keterangan ?? '-' }}</td>
+                        <th>No</th>
+                        <th>Sub Jabatan</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Tanggal Selesai</th>
+                        <th>Keterangan</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($data->riwayatSubJabatans as $index => $riwayat)
+                        <tr>
+                            <td class="text-center">{{ $index + 1 }}</td>
+                            <td>{{ $riwayat->nama_sub_jabatan }}</td>
+                            <td>{{ \Carbon\Carbon::parse($riwayat->pivot->tanggal_mulai)->format('d-m-Y') }}</td>
+                            <td>
+                                {{ $riwayat->pivot->tanggal_selesai
+                                    ? \Carbon\Carbon::parse($riwayat->pivot->tanggal_selesai)->format('d-m-Y')
+                                    : '-' }}
+                            </td>
+                            <td>{{ $riwayat->pivot->keterangan ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
     @endif
+    </div>
 
     <!-- Footer -->
     <div class="footer">

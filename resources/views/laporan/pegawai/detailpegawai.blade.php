@@ -52,9 +52,15 @@
                 </div>
             </div>
 
+            <hr>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-primary mb-0">Riwayat Sub Jabatan</h5>
+                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTambahRiwayat">
+                    <i class="fas fa-plus"></i> Tambah Riwayat
+                </button>
+            </div>
             @if ($data->riwayatSubJabatans && $data->riwayatSubJabatans->count())
-                <hr>
-                <h5 class="text-primary">Riwayat Sub Jabatan</h5>
+
                 <div class="table-responsive">
                     <table class="table table-bordered mt-2">
                         <thead class="thead-light text-center">
@@ -79,8 +85,60 @@
                     </table>
                 </div>
             @else
+                <hr>
                 <p class="text-muted"><em>Belum ada riwayat sub jabatan.</em></p>
             @endif
+
+            <!-- Modal Tambah Riwayat -->
+            <div class="modal fade" id="modalTambahRiwayat" tabindex="-1" aria-labelledby="modalTambahRiwayatLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form action="{{ route('pegawai.riwayat.store', $data->id) }}" method="POST">
+                            @csrf
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTambahRiwayatLabel">Tambah Riwayat Sub Jabatan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Tutup"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group mb-3">
+                                    <label>Sub Jabatan</label>
+                                    <select name="sub_jabatan_id" class="form-control" required>
+                                        <option value="">-- Pilih Sub Jabatan --</option>
+                                        @foreach ($subjabatans as $sub)
+                                            <option value="{{ $sub->id }}"
+                                                {{ old('sub_jabatan_id', $data->sub_jabatan_id) == $sub->id ? 'selected' : '' }}>
+                                                {{ $sub->nama_sub_jabatan }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label>Tanggal Mulai</label>
+                                    <input type="date" name="tanggal_mulai" class="form-control" required>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label>Tanggal Selesai</label>
+                                    <input type="date" name="tanggal_selesai" class="form-control">
+                                    <small class="text-muted">Boleh kosong jika masih aktif</small>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label>Keterangan</label>
+                                    <textarea name="keterangan" class="form-control" rows="2" placeholder="Opsional..."></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

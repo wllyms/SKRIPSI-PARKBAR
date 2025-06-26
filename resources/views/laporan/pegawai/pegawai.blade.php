@@ -79,7 +79,7 @@
                                     <td>{{ $data->subjabatan->nama_sub_jabatan ?? '-' }}</td>
                                     <td class="text-center">
                                         <a href="{{ route('laporan.detailpegawai.show', $data->id) }}"
-                                            class="btn btn-info btn-sm">
+                                            class="btn btn-info btn-sm"> 
                                             <i class="fas fa-eye"></i> Detail
                                         </a>
                                     </td>

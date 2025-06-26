@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SubJabatan extends Model
 {
@@ -19,9 +18,10 @@ class SubJabatan extends Model
         return $this->belongsTo(Jabatan::class);
     }
 
+    // Relasi pivot dengan nama tabel dan kolom foreign key disebutkan eksplisit
     public function pegawais()
     {
-        return $this->belongsToMany(Pegawai::class, 'pegawai_sub_jabatan')
+        return $this->belongsToMany(Pegawai::class, 'pegawai_sub_jabatan', 'sub_jabatan_id', 'pegawai_id')
             ->withPivot(['tanggal_mulai', 'tanggal_selesai', 'keterangan'])
             ->withTimestamps();
     }
