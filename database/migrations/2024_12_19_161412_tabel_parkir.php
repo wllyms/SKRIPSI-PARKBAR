@@ -31,6 +31,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->dateTime('waktu_masuk');
+            $table->integer('durasi')->nullable();
             $table->dateTime('waktu_keluar')->nullable();
 
             $table->enum('status', ['Terparkir', 'Keluar'])->default('Terparkir');

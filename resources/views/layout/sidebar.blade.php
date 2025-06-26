@@ -32,10 +32,22 @@
                 <span>Staff</span>
             </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link" href="/jenispegawai">
                 <i class="fa fa-users"></i>
                 <span>Kategori Pegawai</span>
+            </a>
+        </li> --}}
+        <li class="nav-item">
+            <a class="nav-link" href="/jabatan">
+                <i class="fa fa-users"></i>
+                <span>Jabatan</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/sub-jabatan">
+                <i class="fas fa-sitemap"></i>
+                <span>Sub Jabatan</span>
             </a>
         </li>
     @endif

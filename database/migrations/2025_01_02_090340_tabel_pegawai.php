@@ -22,8 +22,9 @@ return new class extends Migration
             $table->string('merk_kendaraan');
             $table->string('image');
 
-            $table->unsignedBigInteger('jenis_pegawai_id');
-            $table->foreign('jenis_pegawai_id')->references('id')->on('jenis_pegawai')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('jabatan_id');
+            $table->foreign('jabatan_id')->references('id')->on('jabatan')->onDelete('cascade')->onUpdate('cascade');
+            // $table->foreignId('sub_jabatan_id')->constrained('sub_jabatan')->cascadeOnDelete();
             $table->timestamps();
         });
     }

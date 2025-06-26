@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use App\Models\Userr;
+use App\Models\LaporanPengunjung;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SesiController;
 use App\Http\Controllers\DendaController;
@@ -10,13 +11,14 @@ use App\Http\Controllers\TarifController;
 use App\Http\Controllers\TuserController;
 use App\Http\Controllers\UserrController;
 use App\Http\Controllers\ParkirController;
+use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\SubJabatanController;
 use App\Http\Controllers\JenisPegawaiController;
-use App\Http\Controllers\LaporanPengunjungController;
 use App\Http\Controllers\ParkirPegawaiController;
+use App\Http\Controllers\LaporanPengunjungController;
 use App\Http\Controllers\StaffController as ControllersStaffController;
-use App\Models\LaporanPengunjung;
 
 
 
@@ -70,7 +72,7 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
 
 
     // CETAK STRUK PARKIR
-    Route::get('/cetak-struk/{id}', [ParkirController::class, 'cetakStruk'])->name('parkir.cetak-struk'); 
+    Route::get('/cetak-struk/{id}', [ParkirController::class, 'cetakStruk'])->name('parkir.cetak-struk');
 
 
     // SCAN PEGAWAI 
@@ -136,6 +138,20 @@ Route::middleware(['role:super_admin'])->group(function () {
     Route::post('/jenispegawai/submit', [JenisPegawaiController::class, 'submit'])->name('manajemen-JenisPegawai.submit');
     Route::put('/jenispegawai/jenispegawai/{id}', [JenisPegawaiController::class, 'update'])->name('manajemen-JenisPegawai.update');
     Route::delete('/jenispegawai/delete/{id}', [JenisPegawaiController::class, 'delete'])->name('manajemen-JenisPegawai.delete');
+
+
+    // JABATAN
+    Route::get('/jabatan', [JabatanController::class, 'tampil'])->name('manajemen-jabatan.tampil');
+    Route::post('/jabatan/submit', [JabatanController::class, 'submit'])->name('manajemen-jabatan.submit');
+    Route::post('/jabatan/update/{id}', [JabatanController::class, 'update'])->name('manajemen-jabatan.update');
+    Route::get('/jabatan/delete/{id}', [JabatanController::class, 'delete'])->name('manajemen-jabatan.delete');
+
+
+    // SUB JABATAN
+    Route::get('/sub-jabatan', [SubJabatanController::class, 'tampil'])->name('manajemen-subjabatan.tampil');
+    Route::post('/sub-jabatan/submit', [SubJabatanController::class, 'submit'])->name('manajemen-subjabatan.submit');
+    Route::post('/sub-jabatan/update/{id}', [SubJabatanController::class, 'update'])->name('manajemen-subjabatan.update');
+    Route::get('/sub-jabatan/delete/{id}', [SubJabatanController::class, 'delete'])->name('manajemen-subjabatan.delete');
 
 
     // USER

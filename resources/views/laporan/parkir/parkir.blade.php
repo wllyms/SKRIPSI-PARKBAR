@@ -60,6 +60,7 @@
                                     <th>Jenis Tarif</th>
                                     <th>Waktu Masuk</th>
                                     <th>Waktu Keluar</th>
+                                    <th>Durasi</th>
                                     <th>Petugas</th>
                                     <th>Status</th>
                                 </tr>
@@ -78,6 +79,13 @@
                                         </td>
                                         <td>
                                             {{ $data->waktu_keluar ? \Carbon\Carbon::parse($data->waktu_keluar)->format('H:i - d/m/Y') : '-' }}
+                                        </td>
+                                        <td class="text-center">
+                                            @if ($data->durasi)
+                                                {{ floor($data->durasi / 60) }} jam {{ $data->durasi % 60 }} menit
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
                                         </td>
                                         <td class="text-center">{{ $data->user->staff->nama ?? '-' }}</td>
                                         <td class="text-center">

@@ -9,7 +9,7 @@ class JenisPegawai extends Model
 {
     protected $table = 'jenis_pegawai';
 
-    protected $fillable = [
+    protected $fillable = [ 
         'jenis_pegawai'
 
     ];

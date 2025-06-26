@@ -53,7 +53,7 @@
         </div>
 
 
-        <!-- Tabel Laporan Pendapatan --> 
+        <!-- Tabel Laporan Pendapatan -->
         <div class="col-lg-12">
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -68,6 +68,7 @@
                                 <th>Jenis Tarif - Kategori</th>
                                 <th>Waktu Masuk</th>
                                 <th>Waktu Keluar</th>
+                                <th>Durasi</th>
                                 <th>Tarif</th>
                                 <th>Denda</th>
                                 <th>Total</th>
@@ -86,6 +87,13 @@
                                     <td>{{ $data->waktu_masuk ? \Carbon\Carbon::parse($data->waktu_masuk)->format('H:i - d/m/Y') : '-' }}
                                     </td>
                                     <td>{{ $data->waktu_keluar ? \Carbon\Carbon::parse($data->waktu_keluar)->format('H:i - d/m/Y') : '-' }}
+                                    </td>
+                                    <td>
+                                        @if ($data->durasi)
+                                            {{ floor($data->durasi / 60) }} jam {{ $data->durasi % 60 }} menit
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
                                     </td>
                                     <td>Rp {{ number_format($data->tarif->tarif ?? 0, 0, ',', '.') }}</td>
                                     <td>Rp {{ number_format($data->denda->nominal ?? 0, 0, ',', '.') }}</td>

@@ -29,6 +29,7 @@ class ParkirController extends Controller
 
         // Ambil data parkir dengan relasi tarif, user, urutkan berdasarkan waktu_masuk terbaru
         $parkir = Parkir::with('tarif', 'user')
+            ->where('status', 'Terparkir')
             ->orderBy('waktu_masuk', 'desc')
             ->get();
 
@@ -102,15 +103,18 @@ class ParkirController extends Controller
             return back()->withErrors(['waktu_keluar' => 'Waktu keluar tidak boleh lebih awal dari waktu masuk.']);
         }
 
+        // Hitung durasi dalam menit
+        $durasiMenit = $parkir->waktu_masuk->diffInMinutes($waktuKeluar);
+        $durasiJam = ceil($durasiMenit / 60);
+
+        // Simpan ke database
         $parkir->waktu_keluar = $waktuKeluar;
         $parkir->status = Parkir::STATUS_KELUAR;
+        $parkir->durasi = $durasiMenit;
         $parkir->save();
 
+        // Cek jika jenis tarif INAP dan durasi melebihi 48 jam
         if (strtoupper($parkir->tarif->jenis_tarif) === 'INAP') {
-            // Hitung durasi dalam menit lalu bulatkan ke atas ke jam penuh
-            $durasiMenit = $parkir->waktu_masuk->diffInMinutes($waktuKeluar);
-            $durasiJam = ceil($durasiMenit / 60);
-
             $batasJam = 48;
 
             if ($durasiJam > $batasJam) {
@@ -143,6 +147,7 @@ class ParkirController extends Controller
 
 
 
+
     public function prosesScanKeluar(Request $request)
     {
         $decodedText = $request->input('decodedText');
@@ -154,7 +159,6 @@ class ParkirController extends Controller
             ]);
         }
 
-        // Ambil data parkir yang belum keluar
         $parkir = Parkir::with('tarif.kategori')
             ->where('kode_parkir', $decodedText)
             ->whereNull('waktu_keluar')
@@ -184,29 +188,30 @@ class ParkirController extends Controller
             ]);
         }
 
-        // Hitung durasi dan denda (jika INAP)
+        // Hitung durasi
+        $durasiMenit = $parkir->waktu_masuk->diffInMinutes($waktuKeluar);
+        $durasiJam = ceil($durasiMenit / 60);
+
+        // Hitung denda jika INAP
         $dendaTotal = 0;
         $batasJam = 48;
 
         if (strtoupper($parkir->tarif->jenis_tarif) === 'INAP') {
-            $durasiMenit = $parkir->waktu_masuk->diffInMinutes($waktuKeluar);
-            $durasiJam = ceil($durasiMenit / 60);
-
             if ($durasiJam > $batasJam) {
                 $jamTerlambat = $durasiJam - $batasJam;
                 $kategori = strtoupper($parkir->tarif->kategori->nama_kategori);
-
                 $tarifPerJam = ($kategori === 'RODA 2') ? 10000 : 20000;
                 $dendaTotal = $jamTerlambat * $tarifPerJam;
             }
         }
 
-        // Simpan data parkir
+        // Simpan ke database
         $parkir->waktu_keluar = $waktuKeluar;
         $parkir->status = Parkir::STATUS_KELUAR;
+        $parkir->durasi = $durasiMenit;
         $parkir->save();
 
-        // Simpan/update data denda jika ada
+        // Simpan/update denda jika ada
         if ($dendaTotal > 0 && method_exists($parkir, 'denda')) {
             $parkir->denda()->updateOrCreate(
                 ['parkir_id' => $parkir->id],
@@ -234,6 +239,7 @@ class ParkirController extends Controller
                 : 'Kendaraan berhasil keluar tanpa denda.'
         ]);
     }
+
 
     public function cetakStruk($id)
     {

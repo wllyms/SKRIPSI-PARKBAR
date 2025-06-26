@@ -18,12 +18,25 @@ class Pegawai extends Model
         'alamat',
         'merk_kendaraan',
         'image',
-        'jenis_pegawai_id'
+        'jabatan_id'
     ];
 
-    public function jenispegawai()
+    public function jabatan()
     {
-        return $this->belongsTo(JenisPegawai::class, 'jenis_pegawai_id', 'id');
+        return $this->belongsTo(Jabatan::class);
+    }
+
+    public function subjabatan()
+    {
+        return $this->belongsTo(SubJabatan::class);
+    }
+
+    // Untuk riwayat mutasi (optional jika kamu pakai pivot)
+    public function riwayatSubJabatans()
+    {
+        return $this->belongsToMany(SubJabatan::class, 'pegawai_sub_jabatan')
+            ->withPivot(['tanggal_mulai', 'tanggal_selesai', 'keterangan'])
+            ->withTimestamps();
     }
 
     public function parkirpegawai(): HasMany // One to Many relasi

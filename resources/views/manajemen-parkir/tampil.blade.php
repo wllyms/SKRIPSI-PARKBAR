@@ -46,7 +46,6 @@
                                 <th>Plat Kendaraan</th>
                                 <th>Jenis Tarif</th>
                                 <th>Waktu Masuk</th>
-                                <th>Waktu Keluar</th>
                                 <th>Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -62,14 +61,6 @@
                                         {{ $data->tarif->kategori->nama_kategori ?? '-' }}
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($data->waktu_masuk)->format('H:i - d/m/Y') }}</td>
-                                    <td>
-                                        @if ($data->waktu_keluar)
-                                            {{ \Carbon\Carbon::parse($data->waktu_keluar)->format('H:i - d/m/Y') }}
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-
                                     <td>
                                         @if ($data->status == 'Terparkir')
                                             <span class="badge badge-secondary">Terparkir</span>
@@ -124,16 +115,29 @@
                                                 @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="form-group">
+                                                        <label for="kode_parkir">Kode Parkir</label>
+                                                        <input type="text" class="form-control"
+                                                            value="{{ $data->kode_parkir }}" readonly>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="plat_kendaraan">Plat Kendaraan</label>
+                                                        <input type="text" class="form-control"
+                                                            value="{{ $data->plat_kendaraan }}" readonly>
+                                                    </div>
+
+                                                    <div class="form-group">
                                                         <label for="waktu_keluar">Waktu Keluar</label>
                                                         <input type="datetime-local" class="form-control"
                                                             name="waktu_keluar" required
-                                                            value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
+                                                            value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}"
+                                                            readonly>
                                                     </div>
 
                                                     <div class="alert alert-warning">
                                                         Pastikan waktu keluar lebih lambat dari waktu masuk.<br>
                                                         Denda dikenakan jika melebihi batas jam parkir (contoh: 12 jam
-                                                        NON-INAP, 24 jam INAP).
+                                                        NON-INAP, 48 jam INAP).
                                                     </div>
                                                 </div>
 
