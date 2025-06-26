@@ -19,7 +19,7 @@
                     @endif
 
                     @if (session('error'))
-                        <div class="alert alert-dagger alert-dismissible" role="alert">
+                        <div class="alert alert-danger alert-dismissible" role="alert">
                             {!! session('error') !!}
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -42,11 +42,12 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>No</th>
-                                <th>Kode Pegawai</th>
+                                <th>Kode Member</th>
                                 <th>Plat Kendaraan</th>
                                 <th>Nama</th>
-                                <th>Jenis Pegawai</th>
-                                <th class="d-flex justify-content-center">Aksi</th>
+                                <th>Jabatan</th>
+                                <th>Sub Jabatan</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,8 +57,8 @@
                                     <td>{{ $data->kode_member }}</td>
                                     <td>{{ $data->plat_kendaraan }}</td>
                                     <td>{{ $data->nama }}</td>
-                                    {{-- <td>{{ $data->no_telp }}</td> --}}
-                                    <td>{{ $data->jenispegawai->jenis_pegawai }}</td>
+                                    <td>{{ $data->jabatan->nama_jabatan ?? '-' }}</td>
+                                    <td>{{ $data->subjabatan->nama_sub_jabatan ?? '-' }}</td>
                                     <td class="d-flex justify-content-center text-white">
                                         {{-- Detail Pegawai --}}
                                         <a class="btn btn-info btn-sm text-white mr-1"
@@ -78,23 +79,17 @@
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
-
-
                                 </tr>
                             @endforeach
 
-                            <!---- Modal Tambah ---->
+                            {{-- Modal Tambah --}}
                             @include('manajemen-pegawai.tambah')
 
-                            <!---- Modal Update ---->
+                            {{-- Modal Update --}}
                             @include('manajemen-pegawai.update')
 
-                            <!---- Modal Delete ---->
+                            {{-- Modal Delete --}}
                             @include('manajemen-pegawai.delete')
-
-                            {{-- <!---- Modal Delete ---->
-                            @include('manajemen-pegawai.cetak-pegawai') --}}
-
                         </tbody>
                     </table>
                 </div>

@@ -1,6 +1,6 @@
 @foreach ($pegawai as $data)
     <div class="modal fade" id="deleteModal{{ $data->id }}" tabindex="-1" role="dialog"
-        aria-labelledby="deleteModalLabel" aria-hidden="true">
+        aria-labelledby="deleteModalLabel{{ $data->id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-danger">
@@ -9,16 +9,16 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <!-- Form DELETE Data -->
+
                 <form action="{{ route('manajemen-pegawai.delete', $data->id) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
                     <div class="modal-body">
                         <p>Apakah Anda yakin ingin menghapus <strong>{{ $data->nama }}</strong>?</p>
-                        @csrf
-                        @method('DELETE')
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn bg-danger text-white">Hapus</button>
+                        <button type="submit" class="btn btn-danger">Hapus</button>
                     </div>
                 </form>
             </div>

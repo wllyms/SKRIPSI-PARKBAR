@@ -24,7 +24,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('jabatan_id');
             $table->foreign('jabatan_id')->references('id')->on('jabatan')->onDelete('cascade')->onUpdate('cascade');
-            // $table->foreignId('sub_jabatan_id')->constrained('sub_jabatan')->cascadeOnDelete();
+            $table->foreignId('sub_jabatan_id')->constrained('sub_jabatan')->cascadeOnDelete();
             $table->timestamps();
         });
     }

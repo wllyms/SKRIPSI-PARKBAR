@@ -18,7 +18,8 @@ class Pegawai extends Model
         'alamat',
         'merk_kendaraan',
         'image',
-        'jabatan_id'
+        'jabatan_id',
+        'sub_jabatan_id'
     ];
 
     public function jabatan()
@@ -28,7 +29,7 @@ class Pegawai extends Model
 
     public function subjabatan()
     {
-        return $this->belongsTo(SubJabatan::class);
+        return $this->belongsTo(SubJabatan::class, 'sub_jabatan_id');
     }
 
     // Untuk riwayat mutasi (optional jika kamu pakai pivot)
