@@ -237,15 +237,25 @@ class ParkirController extends Controller
 
     public function cetakStruk($id)
     {
-        $parkir = Parkir::with(['tarif.kategori', 'denda', 'petugas']) // opsional jika ada relasi ke petugas
+        $parkir = Parkir::with(['tarif.kategori', 'denda', 'user.staff'])
             ->findOrFail($id);
 
         $tarif = $parkir->tarif->tarif ?? 0;
         $denda = $parkir->denda->nominal ?? 0;
         $total = $tarif + $denda;
 
-        return view('parkir.struk', compact('parkir', 'tarif', 'denda', 'total'));
+        // Cek jika ingin langsung generate PDF, misalnya pakai query string ?pdf=1
+        if (request()->has('pdf')) {
+            $pdf = Pdf::loadView('manajemen-parkir.struk', compact('parkir', 'tarif', 'denda', 'total'))
+                ->setPaper([0, 0, 226.77, 368.5], 'portrait'); // 58mm x 120mm
+
+            return $pdf->stream('Struk_' . $parkir->plat_kendaraan . '.pdf');
+        }
+
+        // Default tampilan HTML biasa
+        return view('manajemen-parkir.struk', compact('parkir', 'tarif', 'denda', 'total'));
     }
+
 
 
 

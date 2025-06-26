@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+<head> 
     <title>Struk Parkir</title>
     <style>
         body {
@@ -111,13 +111,13 @@
         </div>
 
         <div class="separator"></div>
- 
+
         <div class="content">
             <p><strong>Plat:</strong> {{ $parkir->plat_kendaraan }}</p>
             <p><strong>Jenis Tarif:</strong> {{ $parkir->tarif->jenis_tarif }}</p>
             <p><strong>Kategori:</strong> {{ $parkir->tarif->kategori->nama_kategori ?? '-' }}</p>
             <p><strong>Tarif:</strong> Rp {{ number_format($parkir->tarif->tarif, 0, ',', '.') }}</p>
-            <p><strong>Jam Masuk:</strong> {{ $parkir->waktu_masuk }}</p>
+            <p><strong>Waktu Masuk:</strong> {{ $parkir->waktu_masuk }}</p>
             <p><strong>Petugas:</strong> {{ $parkir->user->staff->nama ?? '-' }}</p>
         </div>
 

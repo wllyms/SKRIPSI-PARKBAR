@@ -78,6 +78,14 @@
                                             </button>
                                         @endif
 
+                                        {{-- Tombol Cetak --}}
+                                        @if ($denda->parkir)
+                                            <a href="{{ route('parkir.cetak-struk', ['id' => $denda->parkir->id, 'pdf' => 1]) }}"
+                                                target="_blank" class="btn btn-info btn-sm" title="Cetak Struk PDF 58mm">
+                                                <i class="fas fa-print"></i>
+                                            </a>
+                                        @endif
+
                                     </td>
                                 </tr>
 

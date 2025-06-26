@@ -70,7 +70,7 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
 
 
     // CETAK STRUK PARKIR
-    Route::get('/cetak-struk/{id}', [ParkirController::class, 'cetakStruk'])->name('parkir.cetak-struk');
+    Route::get('/cetak-struk/{id}', [ParkirController::class, 'cetakStruk'])->name('parkir.cetak-struk'); 
 
 
     // SCAN PEGAWAI 
