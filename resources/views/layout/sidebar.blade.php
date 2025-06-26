@@ -117,7 +117,7 @@
         <div id="collapsLaporan" class="collapse" aria-labelledby="headingPage" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="/laporan-parkir">Parkir</a>
-                <a class="collapse-item" href="/laporan-pegawai">Pegawai</a>
+                <a class="collapse-item" href="/laporan-pegawai">Riwayat Pegawai</a> 
                 <a class="collapse-item" href="/laporan-parkirpegawai">Parkir Pegawai</a>
                 <a class="collapse-item" href="/laporan-pendapatan">Pendapatan</a>
                 <a class="collapse-item" href="/laporan-pengaduan">Pengaduan</a>

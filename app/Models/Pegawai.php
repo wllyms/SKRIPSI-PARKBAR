@@ -22,7 +22,7 @@ class Pegawai extends Model
         'sub_jabatan_id'
     ];
 
-    public function jabatan()
+    public function jabatan() 
     {
         return $this->belongsTo(Jabatan::class);
     }

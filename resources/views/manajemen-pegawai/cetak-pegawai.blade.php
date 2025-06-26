@@ -90,11 +90,13 @@
             <p>RS Bhayangkara Banjarmasin</p>
         </div>
         <div class="content">
-            <p><strong>Kode Member:</strong> {{ $pegawai->kode_member ?? '-' }}</p> <!-- Tambahan -->
+            <p><strong>Kode Member:</strong> {{ $pegawai->kode_member ?? '-' }}</p>
             <p><strong>Plat Kendaraan:</strong> {{ $pegawai->plat_kendaraan ?? '-' }}</p>
             <p><strong>Nama:</strong> {{ $pegawai->nama ?? '-' }}</p>
             <p><strong>No Telp:</strong> {{ $pegawai->no_telp ?? '-' }}</p>
             <p><strong>Jenis Pegawai:</strong> {{ $pegawai->jenisPegawai->jenis_pegawai ?? '-' }}</p>
+            <p><strong>Jabatan:</strong> {{ $pegawai->jabatan->nama_jabatan ?? '-' }}</p>
+            <p><strong>Sub Jabatan:</strong> {{ $pegawai->subjabatan->nama_sub_jabatan ?? '-' }}</p>
         </div>
         <div class="barcode">
             @if (!empty($pegawai->kode_member))

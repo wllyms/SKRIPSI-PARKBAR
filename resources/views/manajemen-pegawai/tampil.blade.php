@@ -79,6 +79,7 @@
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
+                                    
                                 </tr>
                             @endforeach
 

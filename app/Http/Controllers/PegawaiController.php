@@ -108,15 +108,20 @@ class PegawaiController extends Controller
 
     public function laporan(Request $request)
     {
-        $jabatanFilter = $request->input('jabatan_id');
-        $pegawai = $jabatanFilter
-            ? Pegawai::where('jabatan_id', $jabatanFilter)->get()
-            : Pegawai::all();
+        $jabatan_id = $request->input('jabatan_id');
+        $sub_jabatan_id = $request->input('sub_jabatan_id');
+
+        $pegawai = Pegawai::with(['jabatan', 'subjabatan', 'riwayatSubJabatans'])
+            ->when($jabatan_id, fn($query) => $query->where('jabatan_id', $jabatan_id))
+            ->when($sub_jabatan_id, fn($query) => $query->where('sub_jabatan_id', $sub_jabatan_id))
+            ->get();
 
         $jabatan = Jabatan::all();
+        $subjabatan = SubJabatan::all();
 
-        return view('laporan.pegawai.pegawai', compact('pegawai', 'jabatan'));
+        return view('laporan.pegawai.pegawai', compact('pegawai', 'jabatan', 'subjabatan'));
     }
+
 
     public function cetakLaporan(Request $request)
     {
@@ -131,9 +136,44 @@ class PegawaiController extends Controller
         return $pdf->stream('laporan-pegawai.pdf');
     }
 
+
+    public function riwayat($id)
+    {
+        $pegawai = Pegawai::with(['riwayatSubJabatans', 'jabatan', 'subjabatan'])->findOrFail($id);
+        $subjabatan = SubJabatan::all();
+
+        return view('manajemen-pegawai.riwayat', compact('pegawai', 'subjabatan'));
+    }
+
+    public function TambahRiwayat(Request $request, $id)
+    {
+        $request->validate([
+            'sub_jabatan_id' => 'required|exists:sub_jabatan,id',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'keterangan' => 'nullable|string'
+        ]);
+
+        $pegawai = Pegawai::findOrFail($id);
+
+        $pegawai->riwayatSubJabatans()->attach($request->sub_jabatan_id, [
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'keterangan' => $request->keterangan
+        ]);
+
+        return back()->with('success', 'Riwayat sub jabatan berhasil ditambahkan.');
+    }
+
+    public function showDetail($id)
+    {
+        $data = Pegawai::with(['jabatan', 'subjabatan', 'riwayatSubJabatans'])->findOrFail($id);
+        return view('laporan.pegawai.detailpegawai', compact('data'));
+    }
+
     public function cetakDetailPegawai($id)
     {
-        $data = Pegawai::with(['jabatan', 'subjabatan'])->findOrFail($id);
+        $data = Pegawai::with(['jabatan', 'subjabatan', 'riwayatSubJabatans'])->findOrFail($id);
 
         if (!empty($data->image)) {
             $imagePath = public_path('storage/' . $data->image);

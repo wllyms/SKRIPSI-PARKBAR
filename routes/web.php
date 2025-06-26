@@ -93,7 +93,10 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     // LAPORAN DAN CETAK PEGAWAI
     Route::get('/laporan-pegawai', [PegawaiController::class, 'laporan'])->name('laporan.pegawai');
     Route::get('/laporan-pegawai/cetak', [PegawaiController::class, 'cetakLaporan'])->name('laporan.pegawai.cetak');
-    Route::get('/laporan-detailpegawai/cetak{id}', [PegawaiController::class, 'cetakDetailPegawai'])->name('laporan.detailpegawai.cetak');
+    Route::get('/laporan/pegawai/detail/{id}', [PegawaiController::class, 'showDetail'])->name('laporan.detailpegawai.show');
+    Route::get('/laporan/pegawai/detail/cetak/{id}', [PegawaiController::class, 'cetakDetailPegawai'])->name('laporan.detailpegawai.cetak');
+
+
 
 
     // LAPORAN DAN CETAK PENDAPATAN
@@ -133,13 +136,6 @@ Route::middleware(['role:super_admin'])->group(function () {
     Route::delete('/staff/delete/{id}', [staffController::class, 'delete'])->name('manajemen-staff.delete');
 
 
-    // JENIS PEGAWAI
-    Route::get('/jenispegawai', [JenisPegawaiController::class, 'tampil'])->name('manajemen-JenisPegawai.tampil');
-    Route::post('/jenispegawai/submit', [JenisPegawaiController::class, 'submit'])->name('manajemen-JenisPegawai.submit');
-    Route::put('/jenispegawai/jenispegawai/{id}', [JenisPegawaiController::class, 'update'])->name('manajemen-JenisPegawai.update');
-    Route::delete('/jenispegawai/delete/{id}', [JenisPegawaiController::class, 'delete'])->name('manajemen-JenisPegawai.delete');
-
-
     // JABATAN
     Route::get('/jabatan', [JabatanController::class, 'tampil'])->name('manajemen-jabatan.tampil');
     Route::post('/jabatan/submit', [JabatanController::class, 'submit'])->name('manajemen-jabatan.submit');
@@ -166,4 +162,9 @@ Route::middleware(['role:super_admin'])->group(function () {
     Route::post('/tarif/submit/', [TarifController::class, 'submit'])->name('manajemen-tarif.submit');
     Route::put('/tarif/update/{id}', [TarifController::class, 'update'])->name('manajemen-tarif.update');
     Route::delete('/tarif/delete/{id}', [TarifController::class, 'delete'])->name('manajemen-tarif.delete');
+
+
+    // RIWAYAT PEGAWAI
+    Route::get('/pegawai/riwayat/{id}', [PegawaiController::class, 'riwayat'])->name('manajemen-pegawai.riwayat');
+    Route::post('/pegawai/riwayat/{id}', [PegawaiController::class, 'TambahRiwayat'])->name('manajemen-pegawai.riwayat.tambah');
 });

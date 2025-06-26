@@ -18,11 +18,6 @@ class ParkirPegawaiController extends Controller
 
     public function submit(Request $request)
     {
-        $request->validate([
-            'kode_member' => 'required|string',
-        ]);
-
-        // Cari pegawai berdasarkan kode_member
         $pegawai = Pegawai::where('kode_member', $request->kode_member)->first();
 
         if (!$pegawai) {
@@ -32,20 +27,32 @@ class ParkirPegawaiController extends Controller
             ], 404);
         }
 
+        $sudahParkir = ParkirPegawai::where('pegawai_id', $pegawai->id)
+            ->where('status', ParkirPegawai::STATUS_TERPARKIR)
+            ->first();
+
+        if ($sudahParkir) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pegawai ini sudah terparkir.',
+            ]);
+        }
+
         ParkirPegawai::create([
             'kode_member' => $pegawai->kode_member,
             'plat_kendaraan' => $pegawai->plat_kendaraan,
-            'tanggal' => Carbon::now('Asia/Makassar')->format('Y-m-d'),
-            'jam_masuk' => Carbon::now('Asia/Makassar')->format('H:i'),
+            'tanggal' => now('Asia/Makassar')->format('Y-m-d'),
+            'jam_masuk' => now('Asia/Makassar')->format('H:i'),
             'pegawai_id' => $pegawai->id,
             'status' => ParkirPegawai::STATUS_TERPARKIR,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => $pegawai->plat_kendaraan
+            'message' => 'Parkir berhasil dicatat untuk plat ' . $pegawai->plat_kendaraan,
         ]);
     }
+
 
     public function laporan(Request $request)
     {

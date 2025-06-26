@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Detail</title>
+    <title>Laporan Detail Pegawai</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,11 +46,11 @@
             border: 1px solid #ddd;
             padding: 10px 15px;
             text-align: left;
-            vertical-align: top;
         }
 
         table th {
-            background-color: #f4f4f4;
+            background-color: #007bff;
+            color: white;
             font-weight: bold;
             text-align: center;
         }
@@ -60,56 +59,16 @@
             background-color: #f9f9f9;
         }
 
-        table td.text-center {
-            text-align: center;
-        }
-
-        table th {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-
-        table th:nth-child(1),
-        table td:nth-child(1) {
-            width: 5%;
-        }
-
-        table th:nth-child(2),
-        table td:nth-child(2) {
-            width: 20%;
-        }
-
-        table th:nth-child(3),
-        table td:nth-child(3) {
-            width: 15%;
-        }
-
-        table th:nth-child(4),
-        table td:nth-child(4) {
-            width: 15%;
-        }
-
-        table th:nth-child(5),
-        table td:nth-child(5) {
-            width: 15%;
-        }
-
-        table th:nth-child(6),
-        table td:nth-child(6) {
-            width: 20%;
-        }
-
-        table th:nth-child(7),
-        table td:nth-child(7) {
-            width: 10%;
-        }
-
         .footer {
             margin-top: 30px;
             text-align: right;
             font-size: 12px;
             color: #777;
+        }
+
+        h3 {
+            margin-top: 40px;
+            color: #007bff;
         }
     </style>
 </head>
@@ -122,20 +81,16 @@
         <h4>RS Bhayangkara Banjarmasin</h4>
     </header>
 
-    <div class="divider"></div>
-
     <!-- Photo -->
     <div class="photo">
         @if (!empty($data->image))
             <img src="{{ public_path('storage/' . $data->image) }}" alt="Foto Pegawai">
         @else
-            <p>Foto tidak tersedia</p>
+            <p><em>Foto tidak tersedia</em></p>
         @endif
     </div>
 
-    <div class="divider"></div>
-
-    <!-- Table Data -->
+    <!-- Tabel Detail Pegawai -->
     <table>
         <thead>
             <tr>
@@ -161,12 +116,37 @@
         </tbody>
     </table>
 
-    <div class="divider"></div>
+    <!-- Tabel Riwayat Sub Jabatan -->
+    @if ($data->riwayatSubJabatans && $data->riwayatSubJabatans->count())
+        <h3>Riwayat Sub Jabatan</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Sub Jabatan</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Selesai</th>
+                    <th>Keterangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($data->riwayatSubJabatans as $index => $riwayat)
+                    <tr>
+                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td>{{ $riwayat->nama_sub_jabatan }}</td>
+                        <td>{{ \Carbon\Carbon::parse($riwayat->pivot->tanggal_mulai)->format('d-m-Y') }}</td>
+                        <td>
+                            {{ $riwayat->pivot->tanggal_selesai
+                                ? \Carbon\Carbon::parse($riwayat->pivot->tanggal_selesai)->format('d-m-Y')
+                                : '-' }}
+                        </td>
+                        <td>{{ $riwayat->pivot->keterangan ?? '-' }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
 
     <!-- Footer -->
     <div class="footer">
         Dicetak pada: {{ \Carbon\Carbon::now()->format('d-m-Y') }}
-    </div>
-</body>
-
-</html>

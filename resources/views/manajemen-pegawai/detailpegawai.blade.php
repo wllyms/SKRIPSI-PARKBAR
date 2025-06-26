@@ -161,10 +161,16 @@
                                 <div class="detail-item">
                                     <strong>{{ $pegawai->nama ?? '-' }}</strong>
                                 </div>
+
                                 <div class="detail-item">
-                                    <p>{{ $pegawai->jenisPegawai->jenis_pegawai ?? '-' }}</p>
+                                    <p>Jabatan: {{ $pegawai->jabatan->nama_jabatan ?? '-' }}</p>
+                                </div>
+
+                                <div class="detail-item">
+                                    <p>Sub Jabatan: {{ $pegawai->subjabatan->nama_sub_jabatan ?? '-' }}</p>
                                 </div>
                             </div>
+
                             <br>
                             <!-- Barcode -->
                             <div class="barcode">
