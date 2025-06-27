@@ -8,6 +8,7 @@ use App\Models\Tarif;
 use App\Models\Parkir;
 use App\Models\Pegawai;
 use App\Models\Kategori;
+use App\Models\SlotParkir;
 use Illuminate\Http\Request;
 use App\Models\ParkirPegawai;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -41,7 +42,12 @@ class ParkirController extends Controller
         // Waktu sekarang sesuai timezone Makassar
         $jam = \Carbon\Carbon::now('Asia/Makassar')->format('H:i');
 
-        return view('manajemen-parkir.tampil', compact('tarif', 'parkir', 'jam', 'kodeParkir'));
+        // Ambil slot dengan jumlah kendaraan yang sedang terparkir
+        $slot = SlotParkir::withCount(['parkir as terpakai' => function ($q) {
+            $q->where('status', 'Terparkir');
+        }])->get();
+
+        return view('manajemen-parkir.tampil', compact('tarif', 'parkir', 'jam', 'kodeParkir', 'slot'));
     }
 
 
@@ -65,27 +71,36 @@ class ParkirController extends Controller
             'plat_kendaraan' => 'required|string|max:255',
             'jenis_tarif' => 'required|exists:tarif,id',
             'user_id' => 'required|exists:tuser,id',
+            'slot_id' => 'required|exists:slot_parkir,id',
         ]);
 
-        // Generate kode parkir otomatis
-        $last = Parkir::orderBy('id', 'desc')->first();
+        // Ambil data slot dan hitung yang sedang terparkir
+        $slot = SlotParkir::withCount(['parkir as terpakai' => function ($q) {
+            $q->where('status', Parkir::STATUS_TERPARKIR);
+        }])->findOrFail($request->slot_id);
+
+        // Validasi ketersediaan slot
+        if ($slot->terpakai >= $slot->kapasitas) {
+            return back()->with('error', 'Slot "' . $slot->nama_slot . '" sudah penuh. Silakan pilih slot lain.');
+        }
+
+        // Generate kode parkir
+        $last = Parkir::latest('id')->first();
         $nextNumber = $last ? ((int)substr($last->kode_parkir, 2)) + 1 : 1;
         $kodeParkir = 'KP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         // Simpan data parkir
-        $parkir = new Parkir();
-        $parkir->kode_parkir = $kodeParkir; // baru ditambahkan
-        $parkir->plat_kendaraan = $request->plat_kendaraan;
-        $parkir->tarif_id = $request->jenis_tarif;
-        $parkir->user_id = $request->user_id;
-        $parkir->waktu_masuk = now();
-        $parkir->status = Parkir::STATUS_TERPARKIR; // pastikan konstanta ini didefinisikan di model Parkir
-        $parkir->save();
+        Parkir::create([
+            'kode_parkir'     => $kodeParkir,
+            'plat_kendaraan'  => $request->plat_kendaraan,
+            'tarif_id'        => $request->jenis_tarif,
+            'user_id'         => $request->user_id,
+            'slot_parkir_id'  => $request->slot_id,
+            'waktu_masuk'     => now(),
+            'status'          => Parkir::STATUS_TERPARKIR,
+        ]);
 
-        // Redirect ke struk/cetak jika ingin
-        // return redirect()->route('parkir.struk', $parkir->id);
-
-        return back()->with('success', 'Data Berhasil Ditambahkan');
+        return back()->with('success', 'Data berhasil ditambahkan ke Slot: ' . $slot->nama_slot);
     }
 
 
@@ -112,6 +127,19 @@ class ParkirController extends Controller
         $parkir->status = Parkir::STATUS_KELUAR;
         $parkir->durasi = $durasiMenit;
         $parkir->save();
+
+        if ($parkir->slot_id) {
+            $slot = \App\Models\SlotParkir::find($parkir->slot_id);
+
+            if ($slot) {
+                $jumlahTerpakai = Parkir::where('slot_id', $slot->id)
+                    ->where('status', Parkir::STATUS_TERPARKIR)
+                    ->count();
+
+                $slot->terpakai = $jumlahTerpakai;
+                $slot->save();
+            }
+        }
 
         // Cek jika jenis tarif INAP dan durasi melebihi 48 jam
         if (strtoupper($parkir->tarif->jenis_tarif) === 'INAP') {
@@ -210,6 +238,19 @@ class ParkirController extends Controller
         $parkir->status = Parkir::STATUS_KELUAR;
         $parkir->durasi = $durasiMenit;
         $parkir->save();
+
+        if ($parkir->slot_id) {
+            $slot = \App\Models\SlotParkir::find($parkir->slot_id);
+
+            if ($slot) {
+                $jumlahTerpakai = Parkir::where('slot_id', $slot->id)
+                    ->where('status', Parkir::STATUS_TERPARKIR)
+                    ->count();
+
+                $slot->terpakai = $jumlahTerpakai;
+                $slot->save();
+            }
+        }
 
         // Simpan/update denda jika ada
         if ($dendaTotal > 0 && method_exists($parkir, 'denda')) {

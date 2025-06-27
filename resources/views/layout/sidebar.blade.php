@@ -32,12 +32,6 @@
                 <span>Staff</span>
             </a>
         </li>
-        {{-- <li class="nav-item">
-            <a class="nav-link" href="/jenispegawai">
-                <i class="fa fa-users"></i>
-                <span>Kategori Pegawai</span>
-            </a>
-        </li> --}}
         <li class="nav-item">
             <a class="nav-link" href="/jabatan">
                 <i class="fa fa-users"></i>
@@ -48,6 +42,13 @@
             <a class="nav-link" href="/sub-jabatan">
                 <i class="fas fa-sitemap"></i>
                 <span>Sub Jabatan</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            {{-- REVISI: Menggunakan route name 'kuesioner.tampil' agar cocok dengan controller --}}
+            <a class="nav-link" href="{{ route('kuesioner.tampil') }}">
+                <i class="fas fa-poll-h"></i>
+                <span>Manajemen Kuesioner</span>
             </a>
         </li>
     @endif
@@ -72,6 +73,12 @@
             </a>
         </li>
     @endif
+    <li class="nav-item">
+        <a class="nav-link" href="/slot">
+            <i class="fas fa-parking"></i>
+            <span>Slot Parkir</span>
+        </a>
+    </li>
     <li class="nav-item">
         <a class="nav-link" href="/pegawai">
             <i class="fas fa-users"></i>
@@ -117,11 +124,14 @@
         <div id="collapsLaporan" class="collapse" aria-labelledby="headingPage" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="/laporan-parkir">Parkir</a>
-                <a class="collapse-item" href="/laporan-pegawai">Riwayat Pegawai</a> 
+                <a class="collapse-item" href="/laporan-slotparkir">Riwayat Slot Parkir</a>
+                <a class="collapse-item" href="/laporan-pegawai">Riwayat Pegawai</a>
                 <a class="collapse-item" href="/laporan-parkirpegawai">Parkir Pegawai</a>
                 <a class="collapse-item" href="/laporan-pendapatan">Pendapatan</a>
                 <a class="collapse-item" href="/laporan-pengaduan">Pengaduan</a>
+                <a class="collapse-item" href="/laporan-kepuasan">Laporan Kepuasan</a>
                 <a class="collapse-item" href="/laporan-denda">Denda</a>
+
             </div>
         </div>
     </li>

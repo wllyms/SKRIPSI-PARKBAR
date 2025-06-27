@@ -21,9 +21,13 @@ return new class extends Migration
 
             // Relasi ke tabel tarif
             $table->foreignId('tarif_id')
-                ->constrained('tarif')
+                ->constrained('tarif') 
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+
+            $table->foreignId('slot_parkir_id')->nullable()
+                ->constrained('slot_parkir')
+                ->nullOnDelete();
 
             // Relasi ke user petugas (misalnya tabel "tuser")
             $table->foreignId('user_id')

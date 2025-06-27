@@ -13,10 +13,15 @@ use App\Http\Controllers\UserrController;
 use App\Http\Controllers\ParkirController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KuesionerController;
+use App\Http\Controllers\SlotParkirController;
 use App\Http\Controllers\SubJabatanController;
 use App\Http\Controllers\JenisPegawaiController;
 use App\Http\Controllers\ParkirPegawaiController;
+use App\Http\Controllers\DynamicFeedbackController;
+use App\Http\Controllers\LaporanKepuasanController;
 use App\Http\Controllers\LaporanPengunjungController;
 use App\Http\Controllers\StaffController as ControllersStaffController;
 
@@ -112,9 +117,20 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     Route::get('/laporan/pengaduan/cetak', [LaporanPengunjungController::class, 'cetak'])->name('laporan.pengaduan.cetak');
 
 
+    // LAPORAN SLOT PARKIR
+    Route::get('/laporan-slotparkir', [SlotParkirController::class, 'laporanSlot'])->name('laporan.slot');
+    Route::get('/laporan/slot-parkir/pdf', [SlotParkirController::class, 'cetakPDF'])->name('laporan.slot.pdf');
+
     // LAPORAN DENDA
     Route::get('/laporan-denda', [DendaController::class, 'laporanDenda'])->name('laporan.denda');
     Route::get('/laporan/denda/cetak', [DendaController::class, 'cetak'])->name('laporan.denda.cetak');
+
+    // RIWAYAT PEGAWAI
+    Route::get('/pegawai/{id}/riwayat/create', [PegawaiController::class, 'formRiwayat'])->name('pegawai.riwayat.create');
+    Route::post('/pegawai/{id}/riwayat', [PegawaiController::class, 'TambahRiwayat'])->name('pegawai.riwayat.store');
+
+    Route::get('/feedback/v2/{kode_parkir}', [DynamicFeedbackController::class, 'tampilkanForm'])->name('feedback.dynamic.show');
+    Route::get('/kepuasan/cetak', [LaporanKepuasanController::class, 'cetakPDF'])->name('laporan.kepuasan.cetak');
 });
 
 
@@ -162,7 +178,23 @@ Route::middleware(['role:super_admin'])->group(function () {
     Route::delete('/tarif/delete/{id}', [TarifController::class, 'delete'])->name('manajemen-tarif.delete');
 
 
-    // RIWAYAT PEGAWAI
-    Route::get('/pegawai/{id}/riwayat/create', [PegawaiController::class, 'formRiwayat'])->name('pegawai.riwayat.create');
-    Route::post('/pegawai/{id}/riwayat', [PegawaiController::class, 'TambahRiwayat'])->name('pegawai.riwayat.store');
+    // SLOT PARKIR
+    Route::get('/slot', [SlotParkirController::class, 'tampil'])->name('manajemen-slot.tampil');
+    Route::post('/slot/submit', [SlotParkirController::class, 'submit'])->name('manajemen-slot.submit');
+    Route::put('/slot/update/{id}', [SlotParkirController::class, 'update'])->name('manajemen-slot.update');
+    Route::delete('/slot/delete/{id}', [SlotParkirController::class, 'delete'])->name('manajemen-slot.delete');
+
+
+    // FEEDBACK
+
+    Route::post('/feedback/v2', [DynamicFeedbackController::class, 'simpanPenilaian'])->name('feedback.dynamic.store');
+
+    // KUESIONER
+    Route::get('/kuesioner', [KuesionerController::class, 'tampil'])->name('kuesioner.tampil');
+    Route::post('/kuesioner/submit', [KuesionerController::class, 'submit'])->name('kuesioner.submit');
+    Route::put('/kuesioner/update/{id}', [KuesionerController::class, 'update'])->name('kuesioner.update');
+    Route::delete('/kuesioner/delete/{id}', [KuesionerController::class, 'delete'])->name('kuesioner.delete');
+
+    //LAPORAN KUESIONER
+    Route::get('/laporan-kepuasan', [LaporanKepuasanController::class, 'index'])->name('laporan.kepuasan.index');
 });

@@ -13,7 +13,7 @@ class Tuser extends Authenticatable
 
     protected $primaryKey = 'id'; // Sesuaikan dengan primary key tabel kamu
 
-    public $timestamps = false; // Nonaktifkan timestamps jika tabel tidak punya created_at & updated_at
+
 
     protected $fillable = [
         'username',
@@ -40,5 +40,10 @@ class Tuser extends Authenticatable
     public function parkiran()
     {
         return $this->hasMany(Parkir::class, 'user_id');
+    }
+
+    public function penilaianDiterima()
+    {
+        return $this->hasMany(PenilaianKepuasan::class, 'tuser_id');
     }
 }

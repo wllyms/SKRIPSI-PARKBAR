@@ -12,9 +12,11 @@ class Parkir extends Model
     protected $table = 'parkir';
 
     protected $fillable = [
+        'kode_parkir',
         'plat_kendaraan',
         'tarif_id',
         'user_id',
+        'slot_parkir_id',
         'waktu_masuk',
         'waktu_keluar',
         'status',
@@ -51,5 +53,15 @@ class Parkir extends Model
     public function user()
     {
         return $this->belongsTo(Tuser::class, 'user_id');
+    }
+
+    public function slot()
+    {
+        return $this->belongsTo(SlotParkir::class, 'slot_parkir_id');
+    }
+
+    public function penilaian()
+    {
+        return $this->hasOne(PenilaianKepuasan::class, 'parkir_id');
     }
 }

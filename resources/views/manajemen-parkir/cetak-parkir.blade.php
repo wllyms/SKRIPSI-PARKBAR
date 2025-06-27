@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<head> 
+<head>
     <title>Struk Parkir</title>
     <style>
         body {
@@ -114,6 +114,7 @@
 
         <div class="content">
             <p><strong>Plat:</strong> {{ $parkir->plat_kendaraan }}</p>
+            <p><strong>Slot:</strong> {{ $parkir->slot->nama_slot ?? '-' }}</p>
             <p><strong>Jenis Tarif:</strong> {{ $parkir->tarif->jenis_tarif }}</p>
             <p><strong>Kategori:</strong> {{ $parkir->tarif->kategori->nama_kategori ?? '-' }}</p>
             <p><strong>Tarif:</strong> Rp {{ number_format($parkir->tarif->tarif, 0, ',', '.') }}</p>

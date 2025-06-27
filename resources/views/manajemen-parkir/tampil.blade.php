@@ -36,6 +36,36 @@
                     </button>
                 </div>
 
+                {{-- Informasi Slot Parkir --}}
+                <div class="card-body">
+                    <h6 class="font-weight-bold text-info mb-3">Status Slot Parkir</h6>
+                    <div class="row">
+                        @foreach ($slot as $item)
+                            @php
+                                $tersisa = $item->kapasitas - $item->terpakai;
+                                $statusClass = $tersisa == 0 ? 'danger' : ($tersisa <= 2 ? 'warning' : 'success');
+                            @endphp
+                            <div class="col-md-3 col-sm-6 mb-2">
+                                <div class="card border-left-{{ $statusClass }} shadow-sm" style="font-size: 13px;">
+                                    <div class="card-body py-2 px-3">
+                                        <div class="text-xs font-weight-bold text-uppercase text-{{ $statusClass }} mb-1">
+                                            {{ $item->nama_slot }}
+                                        </div>
+                                        <div class="small mb-1 text-gray-800">
+                                            {{ $item->terpakai }} / {{ $item->kapasitas }} terisi
+                                        </div>
+                                        <span class="badge badge-{{ $statusClass }}">
+                                            {{ $tersisa == 0 ? 'Penuh' : $tersisa . ' slot tersedia' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+
+
                 {{-- Tabel --}}
                 <div class="table-responsive p-3">
                     <table class="table align-items-center table-flush" id="dataTable">
@@ -45,6 +75,7 @@
                                 <th>Kode Parkir</th>
                                 <th>Plat Kendaraan</th>
                                 <th>Jenis Tarif</th>
+                                <th>Slot Parkir</th>
                                 <th>Waktu Masuk</th>
                                 <th>Status</th>
                                 <th class="text-center">Aksi</th>
@@ -60,6 +91,7 @@
                                         {{ $data->tarif->jenis_tarif ?? '-' }} -
                                         {{ $data->tarif->kategori->nama_kategori ?? '-' }}
                                     </td>
+                                    <td>{{ $data->slot->nama_slot ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($data->waktu_masuk)->format('H:i - d/m/Y') }}</td>
                                     <td>
                                         @if ($data->status == 'Terparkir')

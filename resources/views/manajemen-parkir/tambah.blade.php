@@ -19,6 +19,7 @@
                         <input type="text" class="form-control" id="kode_parkir" value="{{ $kodeParkir }}"
                             readonly>
                     </div>
+
                     <div class="form-group">
                         <label for="plat_kendaraan">Plat Kendaraan</label>
                         <input type="text" class="form-control" name="plat_kendaraan" id="plat_kendaraan" required>
@@ -31,6 +32,22 @@
                                 <option value="{{ $data->id }}">
                                     {{ $data->jenis_tarif }} | {{ $data->kategori->nama_kategori ?? '-' }}
                                 </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slot_id">Slot Parkir</label>
+                        <select class="form-control" name="slot_id" id="slot_id" required>
+                            @foreach ($slot as $item)
+                                @php
+                                    $tersisa = $item->kapasitas - $item->terpakai;
+                                @endphp
+                                @if ($tersisa > 0)
+                                    <option value="{{ $item->id }}">
+                                        {{ $item->nama_slot }} - {{ $tersisa }} slot tersedia
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
