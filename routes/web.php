@@ -129,7 +129,14 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     Route::get('/pegawai/{id}/riwayat/create', [PegawaiController::class, 'formRiwayat'])->name('pegawai.riwayat.create');
     Route::post('/pegawai/{id}/riwayat', [PegawaiController::class, 'TambahRiwayat'])->name('pegawai.riwayat.store');
 
+
+    // FEEDBACK
+    Route::post('/feedback/v2', [DynamicFeedbackController::class, 'simpanPenilaian'])->name('feedback.dynamic.store');
     Route::get('/feedback/v2/{kode_parkir}', [DynamicFeedbackController::class, 'tampilkanForm'])->name('feedback.dynamic.show');
+
+
+    //LAPORAN KUESIONER
+    Route::get('/laporan-kepuasan', [LaporanKepuasanController::class, 'index'])->name('laporan.kepuasan.index');
     Route::get('/kepuasan/cetak', [LaporanKepuasanController::class, 'cetakPDF'])->name('laporan.kepuasan.cetak');
 });
 
@@ -185,16 +192,11 @@ Route::middleware(['role:super_admin'])->group(function () {
     Route::delete('/slot/delete/{id}', [SlotParkirController::class, 'delete'])->name('manajemen-slot.delete');
 
 
-    // FEEDBACK
 
-    Route::post('/feedback/v2', [DynamicFeedbackController::class, 'simpanPenilaian'])->name('feedback.dynamic.store');
 
     // KUESIONER
     Route::get('/kuesioner', [KuesionerController::class, 'tampil'])->name('kuesioner.tampil');
     Route::post('/kuesioner/submit', [KuesionerController::class, 'submit'])->name('kuesioner.submit');
     Route::put('/kuesioner/update/{id}', [KuesionerController::class, 'update'])->name('kuesioner.update');
     Route::delete('/kuesioner/delete/{id}', [KuesionerController::class, 'delete'])->name('kuesioner.delete');
-
-    //LAPORAN KUESIONER
-    Route::get('/laporan-kepuasan', [LaporanKepuasanController::class, 'index'])->name('laporan.kepuasan.index');
 });
