@@ -25,7 +25,7 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const WAIT_TIME = 4000; // Waktu tunggu dalam milidetik (4 detik)
+        const WAIT_TIME = 2000; // Waktu tunggu dalam milidetik (2 detik)
         let isProcessing = false; // Variabel kontrol untuk mencegah pemrosesan ganda
 
         function onScanSuccess(decodedText, decodedResult) {
@@ -67,28 +67,25 @@
                     console.log('Response JSON:', data);
 
                     if (data && data.success) {
-                        let message =
-                            `Kendaraan dengan plat ${data.data.plat_kendaraan} telah keluar pada ${data.data.waktu_keluar}.`;
-                        if (data.data.denda > 0) {
-                            message += ` Denda: Rp${data.data.denda.toLocaleString('id-ID')}`;
-                        }
-
+                        // Jika server merespon sukses
                         Swal.fire({
-                            title: 'Berhasil!',
-                            text: message,
                             icon: 'success',
+                            title: 'Berhasil!',
+                            text: data.message,
                             confirmButtonText: 'OK'
-                        }).then(() => {
-                            setTimeout(() => {
-                                window.location.href = data.data.redirect;
-                            }, 2000); // delay 2 detik setelah klik OK
                         });
 
+                        if (data.data && data.data.cetak_url) {
+                            window.open(data.data.cetak_url, '_blank');
+                        }
+
+
                     } else {
+                        // Jika server merespon gagal
                         Swal.fire({
+                            icon: 'error',
                             title: 'Gagal!',
                             text: data?.message || 'Data tidak valid atau kosong.',
-                            icon: 'error',
                             confirmButtonText: 'OK'
                         });
                     }
@@ -116,7 +113,7 @@
 
         let html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", {
-                fps: 60,
+                fps: 10,
                 qrbox: {
                     width: 450,
                     height: 450

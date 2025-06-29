@@ -141,8 +141,8 @@
                                                 </button>
                                             </div>
 
-                                            <form action="{{ route('manajemen-parkir.keluar', $data->id) }}"
-                                                method="POST">
+                                            <form action="{{ route('manajemen-parkir.keluar', $data->id) }}" method="POST"
+                                                onclick="setTimeout(function(){location.reload()}, 7000)">
                                                 @csrf
                                                 @method('PUT')
                                                 <div class="modal-body">

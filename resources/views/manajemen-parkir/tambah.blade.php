@@ -10,7 +10,8 @@
             </div>
 
             <!-- Form Tambah Data -->
-            <form action="{{ route('manajemen-parkir.submit') }}" method="POST">
+            <form action="{{ route('manajemen-parkir.submit') }}" method="POST" target="_blank"
+                onclick="setTimeout(function(){location.reload()}, 10000)">
                 @csrf
                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                 <div class="modal-body">

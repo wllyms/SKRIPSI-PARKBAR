@@ -19,6 +19,7 @@ return new class extends Migration
             $table->dateTime('waktu_lapor');  // Gabungan tanggal dan jam pelaporan
             $table->string('no_telp');         // Nomor telepon pelapor
             $table->text('keterangan');        // Isi laporan kehilangan atau keterangan lain
+            $table->enum('status', ['Diproses', 'Selesai'])->default('Diproses');
             $table->timestamps();              // created_at dan updated_at
         });
     }

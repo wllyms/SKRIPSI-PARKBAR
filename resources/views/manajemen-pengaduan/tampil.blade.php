@@ -47,12 +47,13 @@
                 <div class="table-responsive p-3">
                     <table class="table align-items-center table-flush" id="dataTable">
                         <thead class="thead-light">
-                            <tr> 
+                            <tr>
                                 <th>No</th>
                                 <th>Nama</th>
                                 <th>Tanggal & Waktu Lapor</th>
                                 <th>No Telp</th>
                                 <th>Keterangan</th>
+                                <th>Status</th>
                                 <th>Petugas</th>
                                 <th>Aksi</th>
                             </tr>
@@ -65,16 +66,34 @@
                                     <td>{{ \Carbon\Carbon::parse($data->waktu_lapor)->format('d-m-Y H:i') }}</td>
                                     <td>{{ $data->no_telp }}</td>
                                     <td>{{ $data->keterangan }}</td>
+                                    <td>
+                                        @if ($data->status == 'Diproses')
+                                            <span class="badge badge-warning">{{ $data->status }}</span>
+                                        @else
+                                            <span class="badge badge-success">{{ $data->status }}</span>
+                                        @endif
                                     <td>{{ $data->user->staff->nama ?? '-' }}</td>
                                     <td class="d-flex justify-content-center text-white">
                                         <button class="btn btn-warning btn-sm mr-1" data-toggle="modal"
                                             data-target="#editModal{{ $data->id }}">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                        <button class="btn btn-danger btn-sm mr-1" data-toggle="modal"
                                             data-target="#deleteModal{{ $data->id }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
+                                        @if ($data->status == 'Diproses')
+                                            {{-- Tombol ini ada di dalam form kecil untuk mengirim request POST --}}
+                                            <form action="{{ route('manajemen-pengaduan.selesaikan', $data->id) }}"
+                                                method="POST" class="d-inline"
+                                                onsubmit="return confirm('Apakah Anda yakin ingin menyelesaikan pengaduan ini?');">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success btn-sm"
+                                                    title="Tandai Selesai">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

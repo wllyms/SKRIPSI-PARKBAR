@@ -33,6 +33,7 @@ class LaporanPengunjungController extends Controller
         $laporan->waktu_lapor = $request->waktu_lapor;
         $laporan->no_telp = $request->no_telp;
         $laporan->keterangan = $request->keterangan;
+        $laporan->status = 'Diproses';
         $laporan->save();
 
         // Kembali dengan pesan sukses
@@ -68,6 +69,19 @@ class LaporanPengunjungController extends Controller
 
         // Redirect balik dengan pesan sukses
         return redirect()->route('manajemen-pengaduan.tampil')->with('success', 'Pengaduan pengunjung berhasil diperbarui.');
+    }
+
+    public function selesaikan($id)
+    {
+        try {
+            $laporan = LaporanPengunjung::findOrFail($id);
+            $laporan->status = 'Selesai';
+            $laporan->save();
+
+            return redirect()->route('manajemen-pengaduan.tampil')->with('success', 'Pengaduan berhasil ditandai sebagai <strong>Selesai</strong>.');
+        } catch (\Exception $e) {
+            return redirect()->route('manajemen-pengaduan.tampil')->with('error', '<strong>Gagal</strong> mengubah status pengaduan.');
+        }
     }
 
     public function delete($id)

@@ -69,6 +69,7 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     Route::post('/pengunjung/submit/', [LaporanPengunjungController::class, 'submit'])->name('manajemen-pengaduan.submit');
     Route::put('/pengunjung/update/{id}', [LaporanPengunjungController::class, 'update'])->name('manajemen-pengaduan.update');
     Route::delete('/laporan-pengunjung/{id}', [LaporanPengunjungController::class, 'delete'])->name('manajemen-pengaduan.delete');;
+    Route::post('/pengaduan/selesaikan/{id}', [LaporanPengunjungController::class, 'selesaikan'])->name('manajemen-pengaduan.selesaikan');
 
 
     // SCAN PARKIR BIASA
@@ -76,7 +77,7 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     Route::get('/parkir-keluar', [ParkirController::class, 'scanKeluar'])->name('manajemen-parkir.scan-keluar');
 
 
-    // CETAK STRUK PARKIR
+    // CETAK STRUK DENDA
     Route::get('/cetak-struk/{id}', [ParkirController::class, 'cetakStruk'])->name('parkir.cetak-struk');
 
 
@@ -121,9 +122,11 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
     Route::get('/laporan-slotparkir', [SlotParkirController::class, 'laporanSlot'])->name('laporan.slot');
     Route::get('/laporan/slot-parkir/pdf', [SlotParkirController::class, 'cetakPDF'])->name('laporan.slot.pdf');
 
+
     // LAPORAN DENDA
     Route::get('/laporan-denda', [DendaController::class, 'laporanDenda'])->name('laporan.denda');
     Route::get('/laporan/denda/cetak', [DendaController::class, 'cetak'])->name('laporan.denda.cetak');
+
 
     // RIWAYAT PEGAWAI
     Route::get('/pegawai/{id}/riwayat/create', [PegawaiController::class, 'formRiwayat'])->name('pegawai.riwayat.create');
@@ -131,8 +134,8 @@ Route::middleware(['role:super_admin,admin'])->group(function () {
 
 
     // FEEDBACK
-    Route::post('/feedback/v2', [DynamicFeedbackController::class, 'simpanPenilaian'])->name('feedback.dynamic.store');
     Route::get('/feedback/v2/{kode_parkir}', [DynamicFeedbackController::class, 'tampilkanForm'])->name('feedback.dynamic.show');
+    Route::post('/feedback/v2', [DynamicFeedbackController::class, 'simpanPenilaian'])->name('feedback.dynamic.store');
 
 
     //LAPORAN KUESIONER

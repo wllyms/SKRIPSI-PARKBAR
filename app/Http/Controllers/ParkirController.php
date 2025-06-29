@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Models\ParkirPegawai;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ParkirController extends Controller
 {
@@ -51,20 +52,6 @@ class ParkirController extends Controller
     }
 
 
-    public function scanKeluar()
-    {
-        return view('manajemen-parkir.scan-keluar');
-    }
-
-    public function cetakParkir($id)
-    {
-        $parkir = Parkir::with('tarif')->findOrFail($id);
-        $pdf = Pdf::loadView('manajemen-parkir.cetak-parkir', compact('parkir'))
-            ->setPaper([0, 0, 226.77, 283.46], 'portrait'); // 58mm x 100mm dalam satuan points
-
-        return $pdf->stream('Struk_' . $parkir->plat_kendaraan . '.pdf');
-    }
-
     public function submit(Request $request)
     {
         $request->validate([
@@ -90,20 +77,35 @@ class ParkirController extends Controller
         $kodeParkir = 'KP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         // Simpan data parkir
-        Parkir::create([
-            'kode_parkir'     => $kodeParkir,
-            'plat_kendaraan'  => $request->plat_kendaraan,
-            'tarif_id'        => $request->jenis_tarif,
-            'user_id'         => $request->user_id,
-            'slot_parkir_id'  => $request->slot_id,
-            'waktu_masuk'     => now(),
-            'status'          => Parkir::STATUS_TERPARKIR,
+        $parkirBaru = Parkir::create([
+            'kode_parkir'    => $kodeParkir,
+            'plat_kendaraan' => $request->plat_kendaraan,
+            'tarif_id'       => $request->jenis_tarif,
+            'user_id'        => $request->user_id,
+            'slot_parkir_id' => $request->slot_id,
+            'waktu_masuk'    => now(),
+            'status'         => Parkir::STATUS_TERPARKIR,
         ]);
 
-        return back()->with('success', 'Data berhasil ditambahkan ke Slot: ' . $slot->nama_slot);
+        return redirect()->route('manajemen-parkir.cetak-parkir', ['id' => $parkirBaru->id]);
     }
 
+    public function delete($id)
+    {
+        try {
+            // Cari data parkir berdasarkan ID
+            $parkir = Parkir::findOrFail($id);
 
+            // Hapus data parkir
+            $parkir->delete();
+
+            // Redirect dengan pesan sukses
+            return redirect()->route('manajemen-parkir.tampil')->with('success', 'Data berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Redirect dengan pesan error jika terjadi kesalahan
+            return redirect()->route('manajemen-parkir.tampil')->with('error', 'Terjadi kesalahan saat menghapus data.');
+        }
+    }
 
     public function keluar(Request $request, $id)
     {
@@ -118,66 +120,92 @@ class ParkirController extends Controller
             return back()->withErrors(['waktu_keluar' => 'Waktu keluar tidak boleh lebih awal dari waktu masuk.']);
         }
 
-        // Hitung durasi dalam menit
+        // 1. Panggil helper untuk menghitung biaya dan denda
+        $hasilKalkulasi = $this->hitungBiayaDanDenda($parkir, $waktuKeluar);
+
+        // 2. Panggil helper untuk update status parkir & slot
+        $this->updateStatusParkir($parkir, $waktuKeluar, $hasilKalkulasi['durasiMenit']);
+
+        // 3. Panggil helper untuk simpan denda HANYA JIKA ada denda
+        if ($hasilKalkulasi['denda'] > 0) {
+            $this->simpanDenda($parkir, $hasilKalkulasi['denda']);
+        }
+
+        // 4. SELALU arahkan ke halaman cetak struk terpadu
+        // Halaman struk ini nantinya yang akan menampilkan detail parkir, denda (jika ada), dan QR code
+        return redirect()->route('parkir.cetak-struk', ['id' => $parkir->id]);
+    }
+
+
+    private function hitungBiayaDanDenda(Parkir $parkir, Carbon $waktuKeluar): array
+    {
         $durasiMenit = $parkir->waktu_masuk->diffInMinutes($waktuKeluar);
         $durasiJam = ceil($durasiMenit / 60);
+        $dendaTotal = 0;
 
-        // Simpan ke database
+        // Cek jika jenis tarif INAP dan durasi melebihi 48 jam
+        if (strtoupper($parkir->tarif->jenis_tarif ?? '') === 'INAP') {
+            $batasJam = 48;
+
+            if ($durasiJam > $batasJam) {
+                $jamTerlambat = $durasiJam - $batasJam;
+                $kategori = strtoupper($parkir->tarif->kategori->nama_kategori ?? '');
+                $tarifPerJam = ($kategori === 'RODA 2') ? 10000 : 20000;
+                $dendaTotal = $jamTerlambat * $tarifPerJam;
+            }
+        }
+
+        return [
+            'durasiMenit' => $durasiMenit,
+            'denda' => $dendaTotal
+        ];
+    }
+
+
+    private function updateStatusParkir(Parkir $parkir, Carbon $waktuKeluar, int $durasiMenit): void
+    {
         $parkir->waktu_keluar = $waktuKeluar;
         $parkir->status = Parkir::STATUS_KELUAR;
         $parkir->durasi = $durasiMenit;
         $parkir->save();
 
-        if ($parkir->slot_id) {
-            $slot = \App\Models\SlotParkir::find($parkir->slot_id);
-
-            if ($slot) {
-                $jumlahTerpakai = Parkir::where('slot_id', $slot->id)
-                    ->where('status', Parkir::STATUS_TERPARKIR)
-                    ->count();
-
-                $slot->terpakai = $jumlahTerpakai;
-                $slot->save();
-            }
-        }
-
-        // Cek jika jenis tarif INAP dan durasi melebihi 48 jam
-        if (strtoupper($parkir->tarif->jenis_tarif) === 'INAP') {
-            $batasJam = 48;
-
-            if ($durasiJam > $batasJam) {
-                $jamTerlambat = $durasiJam - $batasJam;
-
-                $kategori = strtoupper($parkir->tarif->kategori->nama_kategori);
-                $tarifPerJam = ($kategori === 'RODA 2') ? 10000 : 20000;
-
-                $dendaTotal = $jamTerlambat * $tarifPerJam;
-
-                // Simpan/update di tabel denda
-                $parkir->denda()->updateOrCreate(
-                    ['parkir_id' => $parkir->id],
-                    [
-                        'plat_kendaraan' => $parkir->plat_kendaraan,
-                        'tanggal' => now()->toDateString(),
-                        'nominal' => $dendaTotal,
-                        'status' => 'Belum Dibayar',
-                    ]
-                );
-
-                return redirect()->route('manajemen-denda.tampil')
-                    ->with('warning', 'Kendaraan terkena denda karena melebihi batas waktu parkir.');
-            }
-        }
-
-        return redirect()->route('manajemen-parkir.tampil')
-            ->with('success', 'Kendaraan berhasil keluar tanpa denda.');
+        // if ($parkir->slot_parkir_id) {
+        //     $slot = \App\Models\SlotParkir::find($parkir->slot_parkir_id);
+        //     if ($slot) {
+        //         $jumlahTerpakai = Parkir::where('slot_parkir_id', $slot->id)
+        //             ->where('status', Parkir::STATUS_TERPARKIR)
+        //             ->count();
+        //         $slot->terpakai = $jumlahTerpakai;
+        //         $slot->save();
+        //     }
+        // }
     }
 
 
+    private function simpanDenda(Parkir $parkir, float $nominalDenda): void
+    {
+        if (method_exists($parkir, 'denda')) {
+            $parkir->denda()->updateOrCreate(
+                ['parkir_id' => $parkir->id],
+                [
+                    'plat_kendaraan' => $parkir->plat_kendaraan,
+                    'tanggal' => now()->toDateString(),
+                    'nominal' => $nominalDenda,
+                    'status' => 'Belum Dibayar', // Asumsi status default
+                ]
+            );
+        }
+    }
 
+
+    public function scanKeluar()
+    {
+        return view('manajemen-parkir.scan-keluar');
+    }
 
     public function prosesScanKeluar(Request $request)
     {
+        // --- Bagian validasi awal Anda sudah sangat baik, kita pertahankan ---
         $decodedText = $request->input('decodedText');
 
         if (!$decodedText) {
@@ -196,111 +224,92 @@ class ParkirController extends Controller
         if (!$parkir) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data parkir tidak ditemukan.',
+                'message' => 'Data parkir tidak ditemukan atau kendaraan sudah keluar.',
             ]);
         }
 
-        if ($parkir->status === Parkir::STATUS_KELUAR) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Kendaraan sudah keluar sebelumnya.',
-            ]);
-        }
-
-        $waktuKeluar = now();
+        $waktuKeluar = now(); // Gunakan waktu saat ini untuk scan
 
         if ($waktuKeluar->lt($parkir->waktu_masuk)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Waktu keluar tidak boleh sebelum waktu masuk.',
+                'message' => 'Waktu keluar tidak boleh sebelum waktu masuk. Periksa jam server.',
             ]);
         }
 
-        // Hitung durasi
-        $durasiMenit = $parkir->waktu_masuk->diffInMinutes($waktuKeluar);
-        $durasiJam = ceil($durasiMenit / 60);
+        // --- Bagian utama proses keluar kendaraan ---
 
-        // Hitung denda jika INAP
-        $dendaTotal = 0;
-        $batasJam = 48;
+        // 1. Panggil helper untuk menghitung biaya dan denda
+        $hasilKalkulasi = $this->hitungBiayaDanDenda($parkir, $waktuKeluar);
 
-        if (strtoupper($parkir->tarif->jenis_tarif) === 'INAP') {
-            if ($durasiJam > $batasJam) {
-                $jamTerlambat = $durasiJam - $batasJam;
-                $kategori = strtoupper($parkir->tarif->kategori->nama_kategori);
-                $tarifPerJam = ($kategori === 'RODA 2') ? 10000 : 20000;
-                $dendaTotal = $jamTerlambat * $tarifPerJam;
-            }
+        // 2. Panggil helper untuk update status parkir & slot
+        $this->updateStatusParkir($parkir, $waktuKeluar, $hasilKalkulasi['durasiMenit']);
+
+        // 3. Panggil helper untuk simpan denda HANYA JIKA ada denda
+        if ($hasilKalkulasi['denda'] > 0) {
+            $this->simpanDenda($parkir, $hasilKalkulasi['denda']);
         }
 
-        // Simpan ke database
-        $parkir->waktu_keluar = $waktuKeluar;
-        $parkir->status = Parkir::STATUS_KELUAR;
-        $parkir->durasi = $durasiMenit;
-        $parkir->save();
+        // 4. Arahkan ke halaman cetak struk
+        $cetakUrl = route('parkir.cetak-struk', ['id' => $parkir->id]);
 
-        if ($parkir->slot_id) {
-            $slot = \App\Models\SlotParkir::find($parkir->slot_id);
-
-            if ($slot) {
-                $jumlahTerpakai = Parkir::where('slot_id', $slot->id)
-                    ->where('status', Parkir::STATUS_TERPARKIR)
-                    ->count();
-
-                $slot->terpakai = $jumlahTerpakai;
-                $slot->save();
-            }
-        }
-
-        // Simpan/update denda jika ada
-        if ($dendaTotal > 0 && method_exists($parkir, 'denda')) {
-            $parkir->denda()->updateOrCreate(
-                ['parkir_id' => $parkir->id],
-                [
-                    'plat_kendaraan' => $parkir->plat_kendaraan,
-                    'tanggal' => now()->toDateString(),
-                    'nominal' => $dendaTotal,
-                    'status' => 'Belum Dibayar',
-                ]
-            );
-        }
-
+        // 5. Kirim response JSON yang berisi URL untuk mencetak struk
         return response()->json([
             'success' => true,
+            'message' => $hasilKalkulasi['denda'] > 0
+                ? 'Kendaraan terkena denda. Silakan cetak struk.'
+                : 'Kendaraan berhasil keluar. Silakan cetak struk.',
             'data' => [
                 'plat_kendaraan' => $parkir->plat_kendaraan,
-                'waktu_keluar' => $waktuKeluar->format('Y-m-d H:i'),
-                'denda' => $dendaTotal,
-                'redirect' => $dendaTotal > 0
-                    ? route('manajemen-denda.tampil')
-                    : route('manajemen-parkir.tampil'),
-            ],
-            'message' => $dendaTotal > 0
-                ? 'Kendaraan terkena denda karena melebihi batas waktu parkir.'
-                : 'Kendaraan berhasil keluar tanpa denda.'
+                'denda' => $hasilKalkulasi['denda'],
+                'cetak_url' => $cetakUrl // URL ini yang akan dibuka oleh JavaScript di frontend
+            ]
         ]);
+    }
+
+
+
+    public function cetakParkir($id)
+    {
+        $parkir = Parkir::with('tarif')->findOrFail($id);
+        $pdf = Pdf::loadView('manajemen-parkir.cetak-parkir', compact('parkir'))
+            ->setPaper([0, 0, 226.77, 283.46], 'portrait'); // 58mm x 100mm dalam satuan points
+
+        return $pdf->stream('Struk_' . $parkir->plat_kendaraan . '.pdf');
     }
 
 
     public function cetakStruk($id)
     {
+        // 1. Ambil semua data yang relevan dalam satu query, ini sudah benar
         $parkir = Parkir::with(['tarif.kategori', 'denda', 'user.staff'])
             ->findOrFail($id);
 
+        // 2. Siapkan semua variabel biaya, ini juga sudah benar
         $tarif = $parkir->tarif->tarif ?? 0;
         $denda = $parkir->denda->nominal ?? 0;
         $total = $tarif + $denda;
 
-        // Cek jika ingin langsung generate PDF, misalnya pakai query string ?pdf=1
-        if (request()->has('pdf')) {
-            $pdf = Pdf::loadView('manajemen-parkir.struk', compact('parkir', 'tarif', 'denda', 'total'))
-                ->setPaper([0, 0, 226.77, 368.5], 'portrait'); // 58mm x 120mm
+        // --- TAMBAHKAN LOGIKA BARU DI SINI ---
+        // 3. Buat URL feedback yang unik
+        $feedbackUrl = route('feedback.dynamic.show', ['kode_parkir' => $parkir->kode_parkir]);
 
-            return $pdf->stream('Struk_' . $parkir->plat_kendaraan . '.pdf');
-        }
+        // 1. Generate QR Code sebagai SVG (format default yang tidak butuh extension)
+        $svg = QrCode::size(100)->generate($feedbackUrl);
+
+        // 2. Ubah SVG tersebut menjadi Data URL Base64 yang bisa langsung ditempel di <img>
+        $qrCode = 'data:image/svg+xml;base64,' . base64_encode($svg);
+
+
+        // 5. Gabungkan SEMUA data untuk dikirim ke view
+        $dataToView = compact('parkir', 'tarif', 'denda', 'total', 'feedbackUrl', 'qrCode');
+
+        // Cek jika ingin langsung generate PDF, misalnya pakai query string ?pdf=1
+        $pdf = Pdf::loadView('manajemen-parkir.struk', $dataToView)
+            ->setPaper([0, 0, 226.77, 453.54], 'portrait'); // 58mm x 160mm
 
         // Default tampilan HTML biasa
-        return view('manajemen-parkir.struk', compact('parkir', 'tarif', 'denda', 'total'));
+        return $pdf->stream('Struk_' . $parkir->plat_kendaraan . '.pdf');
     }
 
 
@@ -432,7 +441,6 @@ class ParkirController extends Controller
     }
 
 
-
     public function cetakPendapatan(Request $request)
     {
         [$tanggalMulai, $tanggalSelesai] = $this->getValidatedDates($request);
@@ -479,24 +487,6 @@ class ParkirController extends Controller
         ));
 
         return $pdf->stream('laporan-pendapatan-' . $tanggalMulai->format('Y-m-d') . '-sampai-' . $tanggalSelesai->format('Y-m-d') . '-jenis-tarif-' . ($jenisTarif ?? 'semua') . '.pdf');
-    }
-
-
-    public function delete($id)
-    {
-        try {
-            // Cari data parkir berdasarkan ID
-            $parkir = Parkir::findOrFail($id);
-
-            // Hapus data parkir
-            $parkir->delete();
-
-            // Redirect dengan pesan sukses
-            return redirect()->route('manajemen-parkir.tampil')->with('success', 'Data berhasil dihapus.');
-        } catch (\Exception $e) {
-            // Redirect dengan pesan error jika terjadi kesalahan
-            return redirect()->route('manajemen-parkir.tampil')->with('error', 'Terjadi kesalahan saat menghapus data.');
-        }
     }
 
 

@@ -6,7 +6,8 @@
     <title>Struk Parkir</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
+            /* Font khas printer thermal */
             font-size: 11px;
             margin: 0;
             padding: 0;
@@ -43,17 +44,34 @@
             margin: 4px 0;
         }
 
-        .content p {
-            margin: 2px 0;
+        /* Menggunakan table untuk layout yang lebih rapi */
+        .content-table {
+            width: 100%;
             font-size: 11px;
-            line-height: 1.2;
+            line-height: 1.3;
         }
 
-        .content p strong {
-            display: inline-block;
+        .content-table td {
+            vertical-align: top;
+        }
+
+        .content-table .label {
             width: 40%;
         }
 
+        .content-table .value {
+            text-align: right;
+        }
+
+        .total-row td {
+            font-weight: bold;
+            font-size: 12px;
+            padding-top: 2px;
+        }
+
+        .denda-row td {
+            font-weight: bold;
+        }
 
         .footer {
             font-size: 10px;
@@ -61,64 +79,114 @@
             margin-top: 4px;
         }
 
-        .notes {
-            font-size: 9px;
-            margin-top: 4px;
-            color: #b00;
-            border-top: 1px solid #b00;
-            padding-top: 3px;
-            line-height: 1.2;
+        .qr-section {
+            text-align: center;
+            margin-top: 8px;
         }
 
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-                width: 58mm;
-            }
-
-            .struk {
-                padding: 0;
-            }
+        .qr-section p {
+            margin: 0 0 5px 0;
+            font-weight: bold;
         }
     </style>
 </head>
 
-<body>
+<body onload="window.print()">
     <div class="struk">
         <div class="header">
-            <h2>Struk Parkir</h2>
+            <h2>Struk Parkir ParkBara</h2>
             <p>RS Bhayangkara Banjarmasin</p>
         </div>
 
         <div class="separator"></div>
 
         <div class="content">
-            <p><strong>Kode Parkir</strong> {{ $parkir->kode_parkir }}</p>
-            <p><strong>Plat</strong> {{ $parkir->plat_kendaraan }}</p>
-            <p><strong>Masuk</strong> {{ $parkir->waktu_masuk->format('H:i d/m/Y') }}</p>
-            <p><strong>Keluar</strong> {{ $parkir->waktu_keluar->format('H:i d/m/Y') }}</p>
-            <p><strong>Jenis Tarif</strong> {{ strtoupper($parkir->tarif->jenis_tarif) }}</p>
-            <p><strong>Kategori</strong> {{ strtoupper($parkir->tarif->kategori->nama_kategori ?? '-') }}</p>
-            <p><strong>Tarif</strong> Rp{{ number_format($parkir->tarif->tarif, 0, ',', '.') }}</p>
-            <p><strong>Denda</strong> Rp{{ number_format($denda, 0, ',', '.') }}</p>
-            <p><strong>Total</strong> Rp{{ number_format($total, 0, ',', '.') }}</p>
-            <p><strong>Petugas</strong> {{ $parkir->user->staff->nama ?? '-' }}</p>
+            <table class="content-table">
+                <tr>
+                    <td class="label">Kode Parkir</td>
+                    <td class="value">{{ $parkir->kode_parkir }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Plat</td>
+                    <td class="value">{{ $parkir->plat_kendaraan }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Masuk</td>
+                    <td class="value">{{ $parkir->waktu_masuk->format('H:i d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Keluar</td>
+                    <td class="value">{{ $parkir->waktu_keluar->format('H:i d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Jenis Tarif</td>
+                    <td class="value">{{ strtoupper($parkir->tarif->jenis_tarif) }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Kategori</td>
+                    <td class="value">{{ strtoupper($parkir->tarif->kategori->nama_kategori ?? '-') }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Petugas</td>
+                    <td class="value">{{ $parkir->user->staff->nama ?? '-' }}</td>
+                </tr>
+            </table>
         </div>
 
         <div class="separator"></div>
 
-        <div class="footer">
-            Terima kasih atas kunjungan Anda.
+        <div class="content">
+            <table class="content-table">
+                <tr>
+                    <td class="label">Tarif</td>
+                    <td class="value">Rp {{ number_format($tarif, 0, ',', '.') }}</td>
+                </tr>
+
+                {{-- ========================================== --}}
+                {{-- MODIFIKASI 1: Tampilkan Denda Jika Ada --}}
+                {{-- ========================================== --}}
+                @if ($denda > 0)
+                    <tr class="denda-row">
+                        <td class="label">DENDA</td>
+                        <td class="value">Rp {{ number_format($denda, 0, ',', '.') }}</td>
+                    </tr>
+                @endif
+                {{-- ========================================== --}}
+
+                <tr class="total-row">
+                    <td class="label">TOTAL BAYAR</td>
+                    <td class="value">Rp {{ number_format($total, 0, ',', '.') }}</td>
+                </tr>
+            </table>
         </div>
 
-        <div class="notes">
-            <strong>Catatan:</strong><br>
-            - Denda berlaku jika parkir INAP > 48 jam.<br>
-            - Denda/jam: Motor Rp10.000, Mobil Rp20.000.<br>
-            - Kehilangan tiket harap lapor petugas.
-        </div </div>
+        <div class="separator"></div>
+
+        {{-- ================================================ --}}
+        {{-- MODIFIKASI 2: Tambahkan Bagian QR Code Penilaian --}}
+        {{-- ================================================ --}}
+        <div class="qr-section">
+            <img src="{{ $qrCode }}">
+        </div>
+        {{-- ================================================ --}}
+
+        <div class="footer">
+            Terima kasih atas kunjungan Anda.
+            <br>
+            Simpan struk sebagai bukti pembayaran.
+        </div>
+
+    </div>
 </body>
 
+
+<script>
+    window.onload = function() {
+        window.print();
+        setTimeout(function() {
+            window.close();
+        }, 1000); // Tutup 1 detik setelah print
+    };
+</script>
 
 </html>
