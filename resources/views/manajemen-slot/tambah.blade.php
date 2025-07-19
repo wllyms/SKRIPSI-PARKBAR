@@ -4,7 +4,7 @@
         <form action="{{ route('manajemen-slot.submit') }}" method="POST">
             @csrf
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-gradient-primary text-white">
                     <h5 class="modal-title">Tambah Slot Parkir</h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span>&times;</span>
@@ -21,8 +21,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Batal</button>
-                    <button class="btn btn-primary" type="submit">Simpan</button>
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Kembali</button>
+                    <button class="btn bg-gradient-primary text-white" type="submit">Tambah</button>
                 </div>
             </div>
         </form>

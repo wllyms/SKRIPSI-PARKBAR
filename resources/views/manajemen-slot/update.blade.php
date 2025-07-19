@@ -4,7 +4,7 @@
             <form action="{{ route('manajemen-slot.update', $data->id) }}" method="POST">
                 @csrf @method('PUT')
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-gradient-warning text-white">
                         <h5 class="modal-title">Edit Slot Parkir</h5>
                         <button type="button" class="close" data-dismiss="modal">
                             <span>&times;</span>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-dismiss="modal" type="button">Batal</button>
-                        <button class="btn btn-primary" type="submit">Simpan</button>
+                        <button class="btn bg-gradient-warning text-white" type="submit">Edit</button>
                     </div>
                 </div>
             </form>

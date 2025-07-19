@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('kode_member');
             $table->string('plat_kendaraan');
-            $table->date('tanggal');
-            $table->time('jam_masuk')->nullable();
+            $table->dateTime('waktu_masuk');
+            $table->dateTime('waktu_keluar')->nullable(); // Diisi saat pegawai keluar
             $table->unsignedBigInteger('pegawai_id');
             $table->foreign('pegawai_id')->references('id')->on('pegawai')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('status', ['Terparkir', 'Keluar'])->default('Terparkir');

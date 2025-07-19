@@ -25,7 +25,7 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const WAIT_TIME = 4000; // Waktu tunggu (4 detik)
+        const WAIT_TIME = 2000; // Waktu tunggu 
         let isProcessing = false; // Variabel kontrol untuk mencegah pemrosesan ganda
 
         function onScanSuccess(decodedText, decodedResult) {
@@ -109,7 +109,7 @@
 
         let html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", {
-                fps: 60,
+                fps: 10,
                 qrbox: {
                     width: 400,
                     height: 400

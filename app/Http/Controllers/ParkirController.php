@@ -317,58 +317,60 @@ class ParkirController extends Controller
 
     public function laporan(Request $request)
     {
-        // Tanggal default (hari ini)
-        $tanggalMulai = $request->tanggal_mulai ?? now()->format('Y-m-d');
-        $tanggalSelesai = $request->tanggal_selesai ?? now()->format('Y-m-d');
+        // Atur rentang tanggal default ke awal bulan ini hingga hari ini
+        $tanggalMulaiDefault = now()->startOfMonth()->format('Y-m-d');
+        $tanggalSelesaiDefault = now()->format('Y-m-d');
 
-        // Konversi ke datetime
-        $start = Carbon::parse($tanggalMulai)->startOfDay();
-        $end = Carbon::parse($tanggalSelesai)->endOfDay();
+        // Ambil tanggal dari input user, jika tidak ada, gunakan default
+        $tanggalMulai = $request->input('tanggal_mulai', $tanggalMulaiDefault);
+        $tanggalSelesai = $request->input('tanggal_selesai', $tanggalSelesaiDefault);
 
-        // Ambil data parkir dengan filter
-        $dataParkir = Parkir::with('tarif')
+        // Konversi ke objek Carbon untuk query yang akurat
+        $start = \Carbon\Carbon::parse($tanggalMulai)->startOfDay();
+        $end = \Carbon\Carbon::parse($tanggalSelesai)->endOfDay();
+
+        // Ambil SEMUA data parkir (normal & denda) dalam rentang tanggal
+        $dataParkir = Parkir::with(['user.staff', 'tarif.kategori', 'denda'])
             ->whereBetween('waktu_masuk', [$start, $end])
-            ->when($request->status, function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
             ->orderBy('waktu_masuk', 'desc')
             ->get();
 
-        return view('laporan.parkir.parkir', [
-            'dataParkir' => $dataParkir,
-            'tanggalMulai' => $tanggalMulai,
-            'tanggalSelesai' => $tanggalSelesai,
-        ]);
+        return view('laporan.parkir.parkir', compact( // Pastikan nama view benar
+            'dataParkir',
+            'tanggalMulai',
+            'tanggalSelesai'
+        ));
     }
 
     public function cetakLaporan(Request $request)
     {
-        // Ambil input tanggal dan status dari form
-        $tanggalMulai = $request->input('tanggal_mulai');
-        $tanggalSelesai = $request->input('tanggal_selesai');
+        // Gunakan logika tanggal default yang konsisten
+        $tanggalMulaiDefault = now()->startOfMonth()->format('Y-m-d');
+        $tanggalSelesaiDefault = now()->format('Y-m-d');
+
+        $tanggalMulai = $request->input('tanggal_mulai', $tanggalMulaiDefault);
+        $tanggalSelesai = $request->input('tanggal_selesai', $tanggalSelesaiDefault);
         $status = $request->input('status', null);
 
-        // Validasi dan parsing tanggal
+        // Konversi ke objek Carbon untuk query yang akurat
         try {
-            $tanggalMulai = Carbon::parse($tanggalMulai)->startOfDay();
-            $tanggalSelesai = Carbon::parse($tanggalSelesai)->endOfDay();
+            $start = Carbon::parse($tanggalMulai)->startOfDay();
+            $end = Carbon::parse($tanggalSelesai)->endOfDay();
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => 'Format tanggal tidak valid.']);
         }
 
-        // Query data parkir, berdasarkan waktu_masuk dan status (jika ada)
-        $query = Parkir::with('tarif')->whereBetween('waktu_masuk', [
-            $tanggalMulai->startOfDay(),
-            $tanggalSelesai->endOfDay(),
-        ]);
 
-        // Jika status diisi, filter berdasarkan kolom status
-        if (!is_null($status)) {
-            $query->where('status', $status); // 'Terparkir' atau 'Keluar'
+        $query = Parkir::with(['tarif.kategori', 'denda', 'user.staff'])
+            ->whereBetween('waktu_masuk', [$start, $end]);
+
+        if ($status) {
+            $query->where('status', $status);
         }
 
         // Eksekusi query
-        $dataParkir = $query->get();
+        $dataParkir = $query->orderBy('waktu_masuk', 'desc')->get();
+        // ==========================================================
 
         // Generate PDF dengan view laporan
         $pdf = PDF::loadView('laporan.parkir.parkir_pdf', compact(
@@ -378,7 +380,8 @@ class ParkirController extends Controller
             'status'
         ));
 
-        return $pdf->stream('laporan-parkir-' . $tanggalMulai->format('Y-m-d') . '-sampai-' . $tanggalSelesai->format('Y-m-d') . '-status-' . ($status ?? 'semua') . '.pdf');
+        $fileName = 'laporan-parkir-' . $tanggalMulai . '_sd_' . $tanggalSelesai . '.pdf';
+        return $pdf->stream($fileName);
     }
 
 
@@ -514,7 +517,7 @@ class ParkirController extends Controller
             ->sum('nominal');
 
         // Kendaraan pegawai terparkir hari ini
-        $kendaraanPegawaiTerparkir = ParkirPegawai::whereDate('tanggal', $tanggalHariIni)
+        $kendaraanPegawaiTerparkir = ParkirPegawai::whereDate('waktu_masuk', $tanggalHariIni)
             ->where('status', 'Terparkir')
             ->count();
 

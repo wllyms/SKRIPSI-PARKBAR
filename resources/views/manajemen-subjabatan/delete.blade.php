@@ -4,7 +4,7 @@
         <div class="modal-dialog" role="document">
             <form action="{{ route('manajemen-subjabatan.delete', $data->id) }}" method="GET">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-gradient-danger text-white">
                         <h5 class="modal-title">Hapus Sub Jabatan</h5>
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                     </div>
@@ -13,7 +13,7 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button class="btn btn-danger">Hapus</button>
+                        <button class="btn bg-gradient-danger text-white">Hapus</button>
                     </div>
                 </div>
             </form>

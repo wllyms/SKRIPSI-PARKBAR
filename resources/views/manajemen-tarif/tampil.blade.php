@@ -75,7 +75,7 @@
                             @include('manajemen-tarif.update')
 
                             <!---- Modal Delete ---->
-                            {{-- @include('manajemen-grup.delete') --}}
+                            @include('manajemen-tarif.delete')
 
                         </tbody>
                     </table>

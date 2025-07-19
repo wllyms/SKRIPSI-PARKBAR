@@ -4,7 +4,7 @@
         <form action="{{ route('manajemen-jabatan.submit') }}" method="POST">
             @csrf
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-gradient-primary text-white">
                     <h5 class="modal-title">Tambah Jabatan</h5>
                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                 </div>
@@ -16,7 +16,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button class="btn btn-primary">Simpan</button>
+                    <button class="btn btn-primary">Tambah</button>
                 </div>
             </div>
         </form>

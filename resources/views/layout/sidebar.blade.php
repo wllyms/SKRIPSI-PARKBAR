@@ -8,44 +8,44 @@
         <div class="sidebar-brand-text mx-3">PARKBARA</div>
     </a>
     <hr class="sidebar-divider my-0">
-    <li class="nav-item active">
+    <li class="nav-item {{ request()->is('beranda') ? 'active' : '' }}">
         <a class="nav-link" href="/beranda">
             <i class="fas fa-warehouse"></i>
             <span>Dashboard</span>
         </a>
     </li>
 
+    {{-- Grup Menu Super Admin --}}
     @if (Auth::check() && Auth::user()->role == 'super_admin')
         <hr class="sidebar-divider">
         <div class="sidebar-heading">
             Data Master
         </div>
-        <li class="nav-item">
+        <li class="nav-item {{ request()->is('kategori*') ? 'active' : '' }}">
             <a class="nav-link" href="/kategori">
                 <i class="fa fa-car"></i>
                 <span>Kategori Kendaraan</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {{ request()->is('staff*') ? 'active' : '' }}">
             <a class="nav-link" href="/staff">
                 <i class="fa fa-user"></i>
                 <span>Staff</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {{ request()->is('jabatan*') ? 'active' : '' }}">
             <a class="nav-link" href="/jabatan">
                 <i class="fa fa-users"></i>
                 <span>Jabatan</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {{ request()->is('sub-jabatan*') ? 'active' : '' }}">
             <a class="nav-link" href="/sub-jabatan">
                 <i class="fas fa-sitemap"></i>
                 <span>Sub Jabatan</span>
             </a>
         </li>
-        <li class="nav-item">
-            {{-- REVISI: Menggunakan route name 'kuesioner.tampil' agar cocok dengan controller --}}
+        <li class="nav-item {{ request()->is('kuesioner*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('kuesioner.tampil') }}">
                 <i class="fas fa-poll-h"></i>
                 <span>Manajemen Kuesioner</span>
@@ -58,40 +58,50 @@
         PARKING
     </div>
 
+    {{-- Menu Khusus Super Admin di Grup Parking --}}
     @if (Auth::check() && Auth::user()->role == 'super_admin')
-        <li class="nav-item">
+        <li class="nav-item {{ request()->is('user*') ? 'active' : '' }}">
             <a class="nav-link" href="/user">
                 <i class="fas fa-user-alt"></i>
                 <span>User</span>
             </a>
         </li>
-
-        <li class="nav-item">
+        <li class="nav-item {{ request()->is('tarif*') ? 'active' : '' }}">
             <a class="nav-link" href="/tarif">
                 <i class="fas fa-money-bill-wave fa-chart-area"></i>
                 <span>Tarif Parkir</span>
             </a>
         </li>
     @endif
-    <li class="nav-item">
+
+    {{-- Menu Operasional untuk Admin & Super Admin --}}
+    <li class="nav-item {{ request()->is('slot*') ? 'active' : '' }}">
         <a class="nav-link" href="/slot">
             <i class="fas fa-parking"></i>
             <span>Slot Parkir</span>
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item {{ request()->is('pegawai*') ? 'active' : '' }}">
         <a class="nav-link" href="/pegawai">
             <i class="fas fa-users"></i>
             <span>Pegawai</span>
         </a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsParkir"
-            aria-expanded="true" aria-controls="collapsParkir">
+
+    {{-- Logika untuk Dropdown Manajemen Parkir --}}
+    @php
+        $isParkirMenuActive =
+            request()->is('parkirbiasa*') || request()->is('parkir-keluar*') || request()->is('scan-pegawai*');
+    @endphp
+    <li class="nav-item {{ $isParkirMenuActive ? 'active' : '' }}">
+        <a class="nav-link {{ !$isParkirMenuActive ? 'collapsed' : '' }}" href="#" data-toggle="collapse"
+            data-target="#collapsParkir" aria-expanded="{{ $isParkirMenuActive ? 'true' : 'false' }}"
+            aria-controls="collapsParkir">
             <i class="fas fa-car"></i>
             <span>Manajemen Parkir</span>
         </a>
-        <div id="collapsParkir" class="collapse" aria-labelledby="headingPage" data-parent="#accordionSidebar">
+        <div id="collapsParkir" class="collapse {{ $isParkirMenuActive ? 'show' : '' }}" aria-labelledby="headingPage"
+            data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="/parkirbiasa">Parkir Biasa</a>
                 <a class="collapse-item" href="/parkir-keluar">Scan Keluar</a>
@@ -99,42 +109,54 @@
             </div>
         </div>
     </li>
-    <li class="nav-item">
+
+    <li class="nav-item {{ request()->is('denda*') ? 'active' : '' }}">
         <a class="nav-link" href="/denda">
             <i class="fas fa-exclamation-circle"></i>
             <span>Denda</span>
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item {{ request()->is('pengunjung*') || request()->is('pengaduan*') ? 'active' : '' }}">
         <a class="nav-link" href="/pengunjung">
             <i class="fas fa-file-alt"></i>
             <span>Pengaduan Pengunjung</span>
         </a>
     </li>
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">
-        REPORT
-    </div>
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsLaporan"
-            aria-expanded="true" aria-controls="collapsLaporan">
-            <i class="fas fa-fw fa-columns"></i>
-            <span>Manajemen Laporan</span>
-        </a>
-        <div id="collapsLaporan" class="collapse" aria-labelledby="headingPage" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="/laporan-parkir">Parkir</a>
-                <a class="collapse-item" href="/laporan-slotparkir">Riwayat Slot Parkir</a>
-                <a class="collapse-item" href="/laporan-pegawai">Riwayat Pegawai</a>
-                <a class="collapse-item" href="/laporan-parkirpegawai">Parkir Pegawai</a>
-                <a class="collapse-item" href="/laporan-pendapatan">Pendapatan</a>
-                <a class="collapse-item" href="/laporan-pengaduan">Pengaduan</a>
-                <a class="collapse-item" href="/laporan-kepuasan">Laporan Kepuasan</a>
-                <a class="collapse-item" href="/laporan-denda">Denda</a>
 
-            </div>
+    {{-- Grup Menu Laporan Khusus Super Admin --}}
+    @if (Auth::check() && Auth::user()->role == 'super_admin')
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">
+            REPORT
         </div>
-    </li>
+
+        {{-- Logika untuk Dropdown Manajemen Laporan --}}
+        @php
+            $isLaporanMenuActive = request()->is('laporan-*') || request()->is('laporan/kepuasan*');
+        @endphp
+        <li class="nav-item {{ $isLaporanMenuActive ? 'active' : '' }}">
+            <a class="nav-link {{ !$isLaporanMenuActive ? 'collapsed' : '' }}" href="#" data-toggle="collapse"
+                data-target="#collapsLaporan" aria-expanded="{{ $isLaporanMenuActive ? 'true' : 'false' }}"
+                aria-controls="collapsLaporan">
+                <i class="fas fa-fw fa-columns"></i>
+                <span>Manajemen Laporan</span>
+            </a>
+            <div id="collapsLaporan" class="collapse {{ $isLaporanMenuActive ? 'show' : '' }}"
+                aria-labelledby="headingPage" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/laporan-parkir">Parkir</a>
+                    <a class="collapse-item" href="/laporan-slotparkir">Riwayat Slot Parkir</a>
+                    <a class="collapse-item" href="/laporan-pegawai">Riwayat Pegawai</a>
+                    <a class="collapse-item" href="/laporan-parkirpegawai">Parkir Pegawai</a>
+                    <a class="collapse-item" href="/laporan-pendapatan">Pendapatan</a>
+                    <a class="collapse-item" href="/laporan-pengaduan">Pengaduan</a>
+                    <a class="collapse-item" href="/laporan-kepuasan">Laporan Kepuasan</a>
+                    <a class="collapse-item" href="/laporan-denda">Denda</a>
+                </div>
+            </div>
+        </li>
+    @endif
+
     <hr class="sidebar-divider">
     <div class="version" id="version-ruangadmin"></div>
 </ul>

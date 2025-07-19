@@ -119,9 +119,8 @@
                 <th>Plat Kendaraan</th>
                 <th>Waktu Masuk</th>
                 <th>Waktu Keluar</th>
-                <th class="text-right">Tarif Parkir</th>
+                <th>Durasi</th>
                 <th class="text-right">Denda</th>
-                <th class="text-right">Total</th>
                 <th>Status</th>
                 <th>Petugas</th>
             </tr>
@@ -137,14 +136,23 @@
                     <td>
                         {{ $denda->parkir->waktu_keluar ? \Carbon\Carbon::parse($denda->parkir->waktu_keluar)->format('H:i - d/m/Y') : '-' }}
                     </td>
-                    <td class="text-right">
-                        Rp{{ number_format($denda->parkir->tarif->tarif ?? 0, 0, ',', '.') }}
+                    <td class="text-center">
+                        @if ($denda->parkir && $denda->parkir->waktu_keluar)
+                            @php
+                                // Hitung total durasi dalam menit
+                                $totalMenit = $denda->parkir->waktu_masuk->diffInMinutes($denda->parkir->waktu_keluar);
+                                // Hitung jam (pembulatan ke bawah)
+                                $jam = floor($totalMenit / 60);
+                                // Hitung sisa menit
+                                $menit = $totalMenit % 60;
+                            @endphp
+                            {{ $jam }} Jam {{ $menit }} Menit
+                        @else
+                            -
+                        @endif
                     </td>
                     <td class="text-right">
                         Rp{{ number_format($denda->nominal, 0, ',', '.') }}
-                    </td>
-                    <td class="text-right">
-                        Rp{{ number_format(($denda->parkir->tarif->tarif ?? 0) + $denda->nominal, 0, ',', '.') }}
                     </td>
                     <td>
                         <span class="badge badge-{{ $denda->status === 'Belum Dibayar' ? 'danger' : 'success' }}">

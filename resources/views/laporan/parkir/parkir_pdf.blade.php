@@ -95,6 +95,7 @@
                 <th>Jenis Tarif</th>
                 <th>Waktu Masuk</th>
                 <th>Waktu Keluar</th>
+                <th>Durasi</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -112,6 +113,13 @@
                     </td>
                     <td>
                         {{ $data->waktu_keluar ? \Carbon\Carbon::parse($data->waktu_keluar)->format('H:i - d/m/Y') : '-' }}
+                    </td>
+                    <td class="text-center">
+                        @if ($data->durasi)
+                            {{ floor($data->durasi / 60) }} jam {{ $data->durasi % 60 }} menit
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
                     </td>
                     <td class="text-center">
                         <span class="badge badge-{{ $data->status === 'Terparkir' ? 'success' : 'secondary' }}">

@@ -1,20 +1,20 @@
-@foreach ($pegawai as $data)
+@foreach ($tarif as $data)
     <div class="modal fade" id="deleteModal{{ $data->id }}" tabindex="-1" role="dialog"
         aria-labelledby="deleteModalLabel{{ $data->id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-gradient-danger text-white">
-                    <h5 class="modal-title text-white" id="deleteModalLabel{{ $data->id }}">Hapus Pegawai</h5>
+                <div class="modal-header bg-gradient-danger">
+                    <h5 class="modal-title text-white" id="deleteModalLabel{{ $data->id }}">Hapus tarif</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-
-                <form action="{{ route('manajemen-pegawai.delete', $data->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
+                <!-- Form DELETE Data -->
+                <form action="{{ route('manajemen-tarif.delete', $data->id) }}" method="POST">
                     <div class="modal-body">
-                        <p>Apakah Anda yakin ingin menghapus <strong>{{ $data->nama }}</strong>?</p>
+                        <p>Apakah Anda yakin ingin menghapus tarif <strong>{{ $data->jenis_tarif }}</strong>?</p>
+                        @method('DELETE')
+                        @csrf
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>

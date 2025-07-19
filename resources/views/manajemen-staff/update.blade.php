@@ -3,8 +3,8 @@
     <div class="modal fade" id="editModal{{ $data->id }}" tabindex="-1" role="dialog"
         aria-labelledby="tambahModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content"> 
-                <div class="modal-header bg-gradient-primary">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-warning">
                     <h5 class="modal-title text-white" id="tambahModalLabel">Edit Staff</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -33,7 +33,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-primary">Edit</button>
+                        <button type="submit" class="btn bg-gradient-warning text-white">Edit</button>
                     </div>
                 </form>
             </div>

@@ -3,7 +3,7 @@
         aria-labelledby="deleteModalLabel{{ $data->id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-gradient-danger text-white">
                     <h5 class="modal-title" id="deleteModalLabel{{ $data->id }}">Konfirmasi Hapus</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -18,7 +18,7 @@
                     <form action="{{ route('kuesioner.delete', $data->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                        <button type="submit" class="btn bg-gradient-danger text-white">Ya, Hapus</button>
                     </form>
                 </div>
             </div>

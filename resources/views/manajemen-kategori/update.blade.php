@@ -26,7 +26,7 @@
                         <button type="submit" class="btn bg-gradient-warning text-white">Edit</button>
                     </div>
                 </form>
-            </div>
+            </div> 
         </div>
     </div>
 @endforeach

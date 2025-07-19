@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class TarifController extends Controller
 {
     public function tampil()
-    { 
+    {
         $tarif    = Tarif::all();
         $kategori = Kategori::all();
         return view('manajemen-tarif.tampil', compact('tarif', 'kategori'));
@@ -45,6 +45,23 @@ class TarifController extends Controller
         } catch (\Exception $error) {
             // Redirect dengan pesan error jika terjadi masalah
             return redirect()->route('manajemen-tarif.tampil')->with('error', '<strong>Gagal</strong> memperbarui User.');
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            // Cari data tarif berdasarkan ID
+            $tarif = Tarif::findOrFail($id);
+
+            // Hapus data tarif
+            $tarif->delete();
+
+            // Redirect dengan pesan sukses
+            return redirect()->route('manajemen-tarif.tampil')->with('success', 'Tarif berhasil <strong>dihapus</strong>.');
+        } catch (\Exception $error) {
+            // Redirect dengan pesan error jika terjadi masalah
+            return redirect()->route('manajemen-tarif.tampil')->with('error', '<strong>Gagal</strong> menghapus tarif.');
         }
     }
 }

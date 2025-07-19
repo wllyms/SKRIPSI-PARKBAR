@@ -4,7 +4,7 @@
         aria-labelledby="tambahModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-gradient-primary">
+                <div class="modal-header bg-gradient-warning">
                     <h5 class="modal-title text-white" id="tambahModalLabel">Edit Data</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn bg-gradient-warning text-white">Edit</button>
                     </div>
                 </form>
             </div>

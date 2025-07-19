@@ -96,7 +96,7 @@
                     <div class="modal-content">
                         <form action="{{ route('pegawai.riwayat.store', $data->id) }}" method="POST">
                             @csrf
-                            <div class="modal-header">
+                            <div class="modal-header bg-gradient-primary text-white">
                                 <h5 class="modal-title" id="modalTambahRiwayatLabel">Tambah Riwayat Sub Jabatan</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Tutup"></button>

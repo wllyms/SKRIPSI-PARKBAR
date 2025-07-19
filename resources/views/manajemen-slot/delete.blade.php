@@ -4,7 +4,7 @@
             <form action="{{ route('manajemen-slot.delete', $data->id) }}" method="POST">
                 @csrf @method('DELETE')
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-gradient-danger text-white">
                         <h5 class="modal-title">Hapus Slot Parkir</h5>
                         <button type="button" class="close" data-dismiss="modal">
                             <span>&times;</span>
@@ -15,7 +15,7 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-dismiss="modal" type="button">Batal</button>
-                        <button class="btn btn-danger" type="submit">Ya, Hapus</button>
+                        <button class="btn bg-gradient-danger text-white" type="submit">Hapus</button>
                     </div>
                 </div>
             </form>

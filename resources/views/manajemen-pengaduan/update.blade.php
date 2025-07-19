@@ -3,7 +3,7 @@
         aria-labelledby="editModalLabel{{ $data->id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-gradient-primary">
+                <div class="modal-header bg-gradient-warning">
                     <h5 class="modal-title text-white" id="editModalLabel{{ $data->id }}">Edit Laporan Pengunjung
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -42,7 +42,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                        <button type="submit" class="btn bg-gradient-warning text-white">Edit</button>
                     </div>
                 </form>
             </div>
