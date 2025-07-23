@@ -20,48 +20,50 @@ class ParkirPegawaiController extends Controller
 
     public function submit(Request $request)
     {
-        // Validasi input dari scanner
         $request->validate(['kode_member' => 'required|string']);
 
-        // 1. Cari data pegawai berdasarkan kode member yang di-scan
         $pegawai = Pegawai::where('kode_member', $request->kode_member)->first();
-
         if (!$pegawai) {
             return response()->json(['success' => false, 'message' => 'Data member pegawai tidak ditemukan.']);
         }
 
-        // 2. Cek apakah ada catatan parkir yang masih berstatus 'Terparkir' untuk pegawai ini
         $parkirAktif = ParkirPegawai::where('pegawai_id', $pegawai->id)
             ->where('status', 'Terparkir')
             ->latest('waktu_masuk')
             ->first();
 
         if ($parkirAktif) {
-
-
-
+            // --- PROSES KELUAR ---
             $parkirAktif->update([
-                'waktu_keluar' => now(), // Menggunakan datetime, bukan jam terpisah
+                'waktu_keluar' => now(),
                 'status' => 'Keluar'
             ]);
 
+            // REVISI RESPONSE JSON
             return response()->json([
                 'success' => true,
-                'message' => "Selamat Jalan! Pegawai: {$pegawai->nama} berhasil KELUAR."
+                'data'    => [
+                    'nama' => $pegawai->nama,
+                    'aksi' => 'KELUAR'
+                ]
             ]);
         } else {
-
+            // --- PROSES MASUK ---
             ParkirPegawai::create([
                 'pegawai_id' => $pegawai->id,
                 'kode_member' => $pegawai->kode_member,
                 'plat_kendaraan' => $pegawai->plat_kendaraan,
-                'waktu_masuk' => now(), // Menggunakan datetime
+                'waktu_masuk' => now(),
                 'status' => 'Terparkir'
             ]);
 
+            // REVISI RESPONSE JSON
             return response()->json([
                 'success' => true,
-                'message' => "Selamat Datang! Pegawai: {$pegawai->nama} berhasil MASUK."
+                'data'    => [
+                    'nama' => $pegawai->nama,
+                    'aksi' => 'MASUK'
+                ]
             ]);
         }
     }
@@ -69,57 +71,85 @@ class ParkirPegawaiController extends Controller
 
     public function laporan(Request $request)
     {
-
         $tanggalMulaiDefault = now()->startOfMonth()->format('Y-m-d');
         $tanggalSelesaiDefault = now()->format('Y-m-d');
-
 
         $tanggalMulai = $request->input('tanggal_mulai', $tanggalMulaiDefault);
         $tanggalSelesai = $request->input('tanggal_selesai', $tanggalSelesaiDefault);
 
-        $start = Carbon::parse($tanggalMulai)->startOfDay();
-        $end = Carbon::parse($tanggalSelesai)->endOfDay();
+        // Ambil input pegawai_id dari request
+        $pegawaiId = $request->input('pegawai_id');
 
+        $start = \Carbon\Carbon::parse($tanggalMulai)->startOfDay();
+        $end = \Carbon\Carbon::parse($tanggalSelesai)->endOfDay();
 
-        $dataParkir = ParkirPegawai::with('pegawai')
-            ->whereBetween('waktu_masuk', [$start, $end])
-            ->orderBy('waktu_masuk', 'desc')
-            ->get();
+        // Bangun query dasar
+        $query = ParkirPegawai::with('pegawai')
+            ->whereBetween('waktu_masuk', [$start, $end]);
+
+        // ==========================================================
+        //            TAMBAHKAN LOGIKA FILTER NAMA DI SINI
+        // ==========================================================
+        // Jika ada pegawai_id yang dipilih, tambahkan kondisi where ke query
+        if ($pegawaiId) {
+            $query->where('pegawai_id', $pegawaiId);
+        }
+        // ==========================================================
+
+        // Eksekusi query
+        $dataParkir = $query->orderBy('waktu_masuk', 'desc')->get();
+
+        // Ambil daftar semua pegawai untuk ditampilkan di dropdown filter
+        $pegawaiList = Pegawai::orderBy('nama')->get();
 
         return view('laporan.parkirpegawai.parkirpegawai', compact(
             'dataParkir',
             'tanggalMulai',
-            'tanggalSelesai'
+            'tanggalSelesai',
+            'pegawaiList' // Kirim daftar pegawai ke view
         ));
     }
 
     public function cetakLaporan(Request $request)
     {
-        // Ambil input tanggal, dengan default awal bulan hingga hari ini
+        // Ambil semua input filter dari request
         $tanggalMulai = $request->input('tanggal_mulai', now()->startOfMonth()->format('Y-m-d'));
         $tanggalSelesai = $request->input('tanggal_selesai', now()->format('Y-m-d'));
+        $pegawaiId = $request->input('pegawai_id'); // Ambil ID pegawai yang difilter
 
-        // --- PENYEMPURNAAN DI SINI ---
         // Konversi tanggal menjadi objek Carbon dengan waktu yang akurat
-        $start = \Carbon\Carbon::parse($tanggalMulai)->startOfDay(); // Contoh: 2025-06-29 00:00:00
-        $end = \Carbon\Carbon::parse($tanggalSelesai)->endOfDay();   // Contoh: 2025-06-29 23:59:59
+        $start = \Carbon\Carbon::parse($tanggalMulai)->startOfDay();
+        $end = \Carbon\Carbon::parse($tanggalSelesai)->endOfDay();
 
-        $dataParkir = ParkirPegawai::with('pegawai')
-            // Gunakan variabel $start dan $end yang sudah akurat
-            ->whereBetween('waktu_masuk', [$start, $end])
-            // Tambahkan order by agar laporan selalu urut
-            ->orderBy('waktu_masuk', 'desc')
-            ->get();
+        // Bangun query dasar
+        $query = ParkirPegawai::with('pegawai')
+            ->whereBetween('waktu_masuk', [$start, $end]);
 
+        // ==========================================================
+        //            TAMBAHKAN LOGIKA FILTER NAMA DI SINI
+        // ==========================================================
+        // Jika ada pegawai_id yang dipilih, tambahkan kondisi where ke query
+        if ($pegawaiId) {
+            $query->where('pegawai_id', $pegawaiId);
+        }
+        // ==========================================================
+
+        // Eksekusi query
+        $dataParkir = $query->orderBy('waktu_masuk', 'desc')->get();
+
+        // Ambil nama pegawai yang difilter (jika ada) untuk ditampilkan di judul PDF
+        $namaPegawaiFilter = $pegawaiId ? \App\Models\Pegawai::find($pegawaiId)->nama : 'Semua Pegawai';
+
+        // Load view PDF dengan data yang sudah benar
         $pdf = Pdf::loadView('laporan.parkirpegawai.parkirpegawai_pdf', compact(
             'dataParkir',
             'tanggalMulai',
-            'tanggalSelesai'
+            'tanggalSelesai',
+            'namaPegawaiFilter' // Kirim nama pegawai ke view PDF
         ));
 
         // Memberi nama file yang lebih dinamis
         $fileName = 'laporan-parkir-pegawai-' . $tanggalMulai . '_sd_' . $tanggalSelesai . '.pdf';
-
         return $pdf->stream($fileName);
     }
 }

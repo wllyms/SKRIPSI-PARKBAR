@@ -84,7 +84,7 @@
     <!-- Header -->
     <header>
         <img src="{{ public_path('storage/logo-rs.png') }}" alt="Logo RS Bhayangkara">
-        <h1>Laporan Detail Pegawai</h1>
+        <h1>Laporan Riwayat Pegawai</h1>
         <h4>RS Bhayangkara Banjarmasin</h4>
     </header>
 

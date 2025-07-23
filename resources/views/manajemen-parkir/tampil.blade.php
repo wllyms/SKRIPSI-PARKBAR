@@ -167,9 +167,9 @@
                                                     </div>
 
                                                     <div class="alert alert-warning">
-                                                        Pastikan waktu keluar lebih lambat dari waktu masuk.<br>
-                                                        Denda dikenakan jika melebihi batas jam parkir (contoh: 12 jam
-                                                        NON-INAP, 48 jam INAP).
+                                                        <strong>Perhatian!</strong> Pastikan semua data sudah benar.
+                                                        <br>
+                                                        Denda dikenakan jika melebihi batas jam parkir 48 jam INAP.
                                                     </div>
                                                 </div>
 

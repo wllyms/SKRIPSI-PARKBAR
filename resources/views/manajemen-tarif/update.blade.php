@@ -5,7 +5,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-gradient-warning">
-                    <h5 class="modal-title text-white" id="updateModalLabel">Update Data</h5>
+                    <h5 class="modal-title text-white" id="updateModalLabel">Edit Tarif</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

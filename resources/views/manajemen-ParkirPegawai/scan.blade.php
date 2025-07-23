@@ -67,40 +67,34 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    Swal.close();
+                    // Gunakan Swal.update() untuk transisi yang halus
                     if (data && data.success) {
-                        Swal.fire({
-                            title: 'Berhasil!',
-                            text: `Parkir kendaraan dengan plat ${data.message} berhasil dicatat.`,
+
+                        // ===============================================
+                        //           BUAT PESAN SINGKAT DI SINI
+                        // ===============================================
+                        const title = `Berhasil ${data.data.aksi}!`; // Contoh: "Berhasil MASUK!"
+                        const text = `Pegawai: ${data.data.nama}`; // Contoh: "Pegawai: Smith Willyams"
+
+                        Swal.update({
+                            title: title,
+                            text: text,
                             icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.reload();
+                            showConfirmButton: true,
+                            timer: null,
+                            allowOutsideClick: true
                         });
+
                     } else {
-                        Swal.fire({
+                        Swal.update({
                             title: 'Gagal!',
                             text: data?.message || 'Data tidak valid atau kosong.',
                             icon: 'error',
-                            confirmButtonText: 'OK'
+                            showConfirmButton: true,
+                            allowOutsideClick: true
                         });
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.close();
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Terjadi kesalahan saat memproses scan. Silakan coba lagi.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                        isProcessing = false;
-                    }, WAIT_TIME);
-                });
         }
 
         function onScanFailure(error) {

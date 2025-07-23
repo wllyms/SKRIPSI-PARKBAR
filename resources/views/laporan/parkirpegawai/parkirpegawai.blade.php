@@ -13,24 +13,41 @@
                 <div class="card-body">
                     <form action="{{ route('laporan.parkirpegawai') }}" method="GET">
                         <div class="form-row align-items-end">
+                            {{-- Filter Pegawai --}}
                             <div class="form-group col-md-4">
+                                <label for="pegawai_id" class="small font-weight-bold">Nama Pegawai</label>
+                                <select name="pegawai_id" id="pegawai_id" class="form-control">
+                                    <option value="">Semua Pegawai</option>
+                                    @foreach ($pegawaiList as $pegawai)
+                                        <option value="{{ $pegawai->id }}"
+                                            {{ request('pegawai_id') == $pegawai->id ? 'selected' : '' }}>
+                                            {{ $pegawai->nama }} ({{ $pegawai->kode_member }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Filter Tanggal Mulai --}}
+                            <div class="form-group col-md-3">
                                 <label for="tanggal_mulai" class="small font-weight-bold">Tanggal Mulai</label>
                                 <input type="date" class="form-control" name="tanggal_mulai" id="tanggal_mulai"
                                     value="{{ request('tanggal_mulai', $tanggalMulai) }}">
                             </div>
-                            <div class="form-group col-md-4">
+
+                            {{-- Filter Tanggal Selesai --}}
+                            <div class="form-group col-md-3">
                                 <label for="tanggal_selesai" class="small font-weight-bold">Tanggal Selesai</label>
                                 <input type="date" class="form-control" name="tanggal_selesai" id="tanggal_selesai"
                                     value="{{ request('tanggal_selesai', $tanggalSelesai) }}">
                             </div>
-                            <div class="form-group col-md-2">
-                                <button type="submit" class="btn btn-primary w-100">Terapkan</button>
+
+                            <div class="form-group col-md-1">
+                                <button type="submit" class="btn btn-primary w-100">Cari</button>
                             </div>
-                            <div class="form-group col-md-2">
-                                {{-- REVISI: Tombol Cetak sekarang membawa filter yang aktif --}}
+                            <div class="form-group col-md-1">
                                 <a href="{{ route('laporan.parkirpegawai.cetak', request()->query()) }}" target="_blank"
-                                    class="btn btn-success w-100">
-                                    <i class="fas fa-file-pdf"></i> Cetak PDF
+                                    class="btn btn-success w-100" title="Cetak PDF">
+                                    <i class="fas fa-file-pdf"></i>
                                 </a>
                             </div>
                         </div>

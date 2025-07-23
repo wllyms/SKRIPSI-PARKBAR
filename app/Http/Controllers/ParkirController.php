@@ -168,17 +168,6 @@ class ParkirController extends Controller
         $parkir->status = Parkir::STATUS_KELUAR;
         $parkir->durasi = $durasiMenit;
         $parkir->save();
-
-        // if ($parkir->slot_parkir_id) {
-        //     $slot = \App\Models\SlotParkir::find($parkir->slot_parkir_id);
-        //     if ($slot) {
-        //         $jumlahTerpakai = Parkir::where('slot_parkir_id', $slot->id)
-        //             ->where('status', Parkir::STATUS_TERPARKIR)
-        //             ->count();
-        //         $slot->terpakai = $jumlahTerpakai;
-        //         $slot->save();
-        //     }
-        // }
     }
 
 

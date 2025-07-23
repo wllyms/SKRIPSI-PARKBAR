@@ -150,7 +150,7 @@
                     <a class="collapse-item" href="/laporan-parkirpegawai">Parkir Pegawai</a>
                     <a class="collapse-item" href="/laporan-pendapatan">Pendapatan</a>
                     <a class="collapse-item" href="/laporan-pengaduan">Pengaduan</a>
-                    <a class="collapse-item" href="/laporan-kepuasan">Laporan Kepuasan</a>
+                    <a class="collapse-item" href="/laporan-kepuasan">Kepuasan Pengunjung</a>
                     <a class="collapse-item" href="/laporan-denda">Denda</a>
                 </div>
             </div>

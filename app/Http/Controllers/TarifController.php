@@ -41,10 +41,10 @@ class TarifController extends Controller
             $tarif->save();
 
             // Redirect dengan pesan sukses
-            return redirect()->route('manajemen-tarif.tampil')->with('success', 'User berhasil <strong>diperbarui</strong>.');
+            return redirect()->route('manajemen-tarif.tampil')->with('success', 'Tarif berhasil <strong>diperbarui</strong>.');
         } catch (\Exception $error) {
             // Redirect dengan pesan error jika terjadi masalah
-            return redirect()->route('manajemen-tarif.tampil')->with('error', '<strong>Gagal</strong> memperbarui User.');
+            return redirect()->route('manajemen-tarif.tampil')->with('error', '<strong>Gagal</strong> memperbarui Tarif.');
         }
     }
 
