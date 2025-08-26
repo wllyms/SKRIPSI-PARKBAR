@@ -7,7 +7,7 @@
     <title>Laporan Kepuasan Pengunjung - ParkBar</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: DejaVu Sans, sans-serif;
             margin: 25px;
             color: #333;
             font-size: 12px;
@@ -133,8 +133,8 @@
         <img src="{{ public_path('storage/logo-rs.png') }}" alt="Logo ParkBar" />
         <h1>Laporan Kepuasan Pengunjung</h1>
         <h4>Aplikasi Parkir ParkBar</h4>
-        <h4>Periode: {{ \Carbon\Carbon::parse($startDate)->format('d F Y') }} -
-            {{ \Carbon\Carbon::parse($endDate)->format('d F Y') }}</h4>
+        <h4>Periode: {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} -
+            {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}</h4>
     </header>
 
     <div class="section-title">Ringkasan Umum</div>
@@ -225,7 +225,7 @@
 
 
     <div class="footer">
-        Dicetak pada: {{ \Carbon\Carbon::now()->format('d F Y, H:i:s') }}
+        Dicetak pada: {{ \Carbon\Carbon::now()->format('d-m-Y') }}
     </div>
 </body>
 

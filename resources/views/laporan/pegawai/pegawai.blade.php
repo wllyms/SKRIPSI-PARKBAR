@@ -1,19 +1,23 @@
 @extends('layout.main')
 
-@section('pagename', 'LAPORAN PEGAWAI')
+@section('pagename', 'LAPORAN RIWAYAT PEGAWAI')
 @section('title', 'ParkBar - Laporan Pegawai')
 @section('content')
 
     <div class="row">
         <!-- Filter Form -->
         <div class="col-lg-12">
-            <div class="card mb-4">
-                <div class="card-header py-3">
-                    <form action="{{ route('laporan.pegawai') }}" method="GET" class="w-100">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="jabatan_id">Filter Jabatan</label>
-                                <select name="jabatan_id" class="form-control">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header font-weight-bold text-primary">
+                    <i class="fas fa-filter"></i> Filter Laporan Pegawai
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('laporan.pegawai') }}" method="GET">
+                        <div class="row">
+                            {{-- Filter Jabatan --}}
+                            <div class="col-md-6 mb-2">
+                                <label for="jabatan_id" class="small font-weight-bold">Filter Jabatan</label>
+                                <select name="jabatan_id" id="jabatan_id" class="form-control">
                                     <option value="">Semua</option>
                                     @foreach ($jabatan as $item)
                                         <option value="{{ $item->id }}"
@@ -23,9 +27,11 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="sub_jabatan_id">Filter Sub Jabatan</label>
-                                <select name="sub_jabatan_id" class="form-control">
+
+                            {{-- Filter Sub Jabatan --}}
+                            <div class="col-md-6 mb-2">
+                                <label for="sub_jabatan_id" class="small font-weight-bold">Filter Sub Jabatan</label>
+                                <select name="sub_jabatan_id" id="sub_jabatan_id" class="form-control">
                                     <option value="">Semua</option>
                                     @foreach ($subjabatan as $item)
                                         <option value="{{ $item->id }}"
@@ -36,24 +42,27 @@
                                 </select>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-2">
-                            <i class="fas fa-filter"></i> Terapkan Filter
-                        </button>
+
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter"></i> Terapkan Filter
+                            </button>
+
+                            {{-- Cetak PDF (opsional, aktifkan jika route tersedia) --}}
+                            <a href="{{ route('laporan.pegawai.cetak', request()->query()) }}" target="_blank"
+                                class="btn btn-success">
+                                <i class="fas fa-file-pdf"></i> Cetak PDF
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
 
+
         <!-- Tabel Laporan Pegawai -->
         <div class="col-lg-12">
             <div class="card mb-4 shadow-sm">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="m-0 text-primary">Laporan Data Pegawai</h5>
-                    <a href="{{ route('laporan.pegawai.cetak', ['jenis_pegawai' => request('jenis_pegawai')]) }}"
-                        target="_blank" class="btn btn-success">
-                        <i class="fas fa-file-pdf"></i> Cetak PDF
-                    </a>
-                </div>
 
                 <div class="table-responsive p-3">
                     <table class="table table-striped table-bordered" id="dataTable">
@@ -79,7 +88,7 @@
                                     <td>{{ $data->subjabatan->nama_sub_jabatan ?? '-' }}</td>
                                     <td class="text-center">
                                         <a href="{{ route('laporan.detailpegawai.show', $data->id) }}"
-                                            class="btn btn-info btn-sm"> 
+                                            class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i> Detail
                                         </a>
                                     </td>

@@ -125,12 +125,7 @@
         <div class="separator"></div>
 
         <div class="barcode">
-            @php
-                $code = $parkir->kode_parkir;
-                $generator = new \Picqer\Barcode\BarcodeGeneratorHTML();
-                $barcode = $generator->getBarcode($code, $generator::TYPE_CODE_128);
-            @endphp
-            {!! $barcode !!}
+            <img src="{{ $qrCode }}" alt="QR Code" style="width: 100px; height: 100px;">
         </div>
 
         <div class="separator"></div>

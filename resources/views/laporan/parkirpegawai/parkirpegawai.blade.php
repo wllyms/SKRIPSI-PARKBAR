@@ -8,13 +8,13 @@
         <div class="col-lg-12">
             <div class="card mb-4 shadow-sm">
                 <div class="card-header font-weight-bold text-primary">
-                    <i class="fas fa-filter"></i> Filter Laporan
+                    <i class="fas fa-filter"></i> Filter Laporan Parkir Pegawai
                 </div>
                 <div class="card-body">
                     <form action="{{ route('laporan.parkirpegawai') }}" method="GET">
-                        <div class="form-row align-items-end">
+                        <div class="row">
                             {{-- Filter Pegawai --}}
-                            <div class="form-group col-md-4">
+                            <div class="col-md-4 mb-2">
                                 <label for="pegawai_id" class="small font-weight-bold">Nama Pegawai</label>
                                 <select name="pegawai_id" id="pegawai_id" class="form-control">
                                     <option value="">Semua Pegawai</option>
@@ -27,34 +27,35 @@
                                 </select>
                             </div>
 
-                            {{-- Filter Tanggal Mulai --}}
-                            <div class="form-group col-md-3">
+                            {{-- Tanggal Mulai --}}
+                            <div class="col-md-4 mb-2">
                                 <label for="tanggal_mulai" class="small font-weight-bold">Tanggal Mulai</label>
                                 <input type="date" class="form-control" name="tanggal_mulai" id="tanggal_mulai"
                                     value="{{ request('tanggal_mulai', $tanggalMulai) }}">
                             </div>
 
-                            {{-- Filter Tanggal Selesai --}}
-                            <div class="form-group col-md-3">
+                            {{-- Tanggal Selesai --}}
+                            <div class="col-md-4 mb-2">
                                 <label for="tanggal_selesai" class="small font-weight-bold">Tanggal Selesai</label>
                                 <input type="date" class="form-control" name="tanggal_selesai" id="tanggal_selesai"
                                     value="{{ request('tanggal_selesai', $tanggalSelesai) }}">
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-1">
-                                <button type="submit" class="btn btn-primary w-100">Cari</button>
-                            </div>
-                            <div class="form-group col-md-1">
-                                <a href="{{ route('laporan.parkirpegawai.cetak', request()->query()) }}" target="_blank"
-                                    class="btn btn-success w-100" title="Cetak PDF">
-                                    <i class="fas fa-file-pdf"></i>
-                                </a>
-                            </div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter"></i> Terapkan Filter
+                            </button>
+                            <a href="{{ route('laporan.parkirpegawai.cetak', request()->query()) }}" target="_blank"
+                                class="btn btn-success">
+                                <i class="fas fa-file-pdf"></i> Cetak PDF
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+
 
         <div class="col-lg-12">
             <div class="card mb-4 shadow-sm">

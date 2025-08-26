@@ -5,7 +5,7 @@
 
 @section('content')
     <div class="row">
-        <!-- Filter Card -->
+        <!-- Filter Card --> 
         <div class="col-lg-12">
             <div class="card mb-4 shadow-sm">
                 <div class="card-header font-weight-bold text-primary">Filter Data Kendaraan</div>

@@ -37,7 +37,7 @@ class DynamicFeedbackController extends Controller
             abort(404, 'Halaman tidak ditemukan atau terjadi kesalahan.');
         }
     }
- 
+
     /**
      * Menyimpan data penilaian dari form.
      * Disesuaikan dengan nama method 'submit' dari contoh Anda, saya beri nama 'simpanPenilaian'.
@@ -77,10 +77,10 @@ class DynamicFeedbackController extends Controller
         } catch (\Exception $e) {
             Log::error('Gagal menyimpan penilaian: ' . $e->getMessage());
             // Kembali ke halaman sebelumnya dengan pesan error, mirip pola Anda
-            return back()->withInput()->with('error', '<strong>Gagal</strong> menyimpan penilaian. Terjadi kesalahan pada server.');
+            return back()->withInput()->with('error', 'Gagal menyimpan penilaian. Terjadi kesalahan pada server.');
         }
 
         // Tampilkan halaman terima kasih. Ini lebih cocok daripada redirect untuk form publik.
-        return view('feedback.terima_kasih')->with('message', '<strong>Terima kasih banyak!</strong> Masukan Anda telah berhasil kami simpan.');
+        return view('feedback.terima_kasih')->with('message', 'Terima kasih banyak! Masukan Anda telah berhasil kami simpan.');
     }
 }

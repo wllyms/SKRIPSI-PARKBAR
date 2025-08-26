@@ -10,10 +10,21 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header text-center">
-                            <h4 class="card-title">Scan Barcode</h4>
+                            <h4 class="card-title">Scan Member</h4>
                         </div>
                         <div class="card-body text-center">
-                            <!-- Elemen untuk pemindai QR -->
+                            <!-- Gunakan div untuk elemen pemindai QR -->
+                            <div class="card-body text-center">
+                                {{-- TAMBAHAN: Dropdown untuk memilih kamera --}}
+                                <div class="mb-3">
+                                    <label for="camera-select" class="form-label small">Pilih Kamera:</label>
+                                    <select id="camera-select" class="form-control form-control-sm"
+                                        style="max-width: 300px; margin: auto;"></select>
+                                </div>
+
+                                <div id="reader" style="width: 100%; max-width: 400px; height: auto; margin: auto;">
+                                </div>
+                            </div>
                             <div id="reader" style="width: 400px; height: 400px;"></div>
                         </div>
                     </div>
@@ -25,37 +36,31 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const WAIT_TIME = 2000; // Waktu tunggu 
-        let isProcessing = false; // Variabel kontrol untuk mencegah pemrosesan ganda
+        const WAIT_TIME = 2000;
+        let isProcessing = false;
 
+        // Fungsi onScanSuccess Anda yang sudah disempurnakan
         function onScanSuccess(decodedText, decodedResult) {
             if (isProcessing) {
-                // Jika alert belum terlihat, tampilkan alert peringatan
-                if (!Swal.isVisible()) {
-                    Swal.fire({
-                        title: 'Harap Tunggu!',
-                        text: 'Silakan tunggu sebelum memindai lagi.',
-                        icon: 'warning',
-                        timer: WAIT_TIME,
-                        showConfirmButton: false
-                    });
-                }
                 return;
             }
+            isProcessing = true;
 
-            isProcessing = true; // Kunci proses pemindaian
-            console.log(`Kode ditemukan: ${decodedText}`, decodedResult);
+            html5QrCode.stop().then(ignore => console.log("Scanner stopped upon success."));
 
             Swal.fire({
                 title: 'Memproses...',
-                text: 'Harap tunggu sementara proses sedang berjalan.',
+                text: 'Harap tunggu...',
                 allowOutsideClick: false,
                 didOpen: () => {
-                    Swal.showLoading();
+                    Swal.showLoading()
                 }
             });
 
-            fetch('{{ route('process.scanpegawai') }}', {
+            // INI ADALAH ROUTE UNTUK PARKIR PEGAWAI
+            let targetRoute = '{{ route('process.scanpegawai') }}';
+
+            fetch(targetRoute, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -63,55 +68,89 @@
                     },
                     body: JSON.stringify({
                         kode_member: decodedText
-                    })
+                    }) // Kirim sebagai 'kode_member'
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // Gunakan Swal.update() untuk transisi yang halus
                     if (data && data.success) {
-
-                        // ===============================================
-                        //           BUAT PESAN SINGKAT DI SINI
-                        // ===============================================
-                        const title = `Berhasil ${data.data.aksi}!`; // Contoh: "Berhasil MASUK!"
-                        const text = `Pegawai: ${data.data.nama}`; // Contoh: "Pegawai: Smith Willyams"
-
-                        Swal.update({
-                            title: title,
-                            text: text,
+                        const title = `Berhasil ${data.data.aksi}!`;
+                        const text = `Pegawai: ${data.data.nama}`;
+                        Swal.fire({
                             icon: 'success',
-                            showConfirmButton: true,
-                            timer: null,
-                            allowOutsideClick: true
+                            title: title,
+                            text: text
                         });
-
                     } else {
-                        Swal.update({
-                            title: 'Gagal!',
-                            text: data?.message || 'Data tidak valid atau kosong.',
+                        Swal.fire({
                             icon: 'error',
-                            showConfirmButton: true,
-                            allowOutsideClick: true
+                            title: 'Gagal!',
+                            text: data?.message || 'Data tidak valid.'
                         });
                     }
                 })
+                .catch(error => {
+                    Swal.fire('Error!', 'Terjadi kesalahan koneksi.', 'error');
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        isProcessing = false;
+                        const cameraSelect = document.getElementById('camera-select');
+                        startScanner(cameraSelect.value); // Mulai ulang scanner
+                    }, WAIT_TIME);
+                });
         }
 
         function onScanFailure(error) {
-            // Penanganan error scan jika diperlukan
+            // Biarkan kosong
         }
 
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", {
+        // --- LOGIKA UNTUK MENDETEKSI DAN MEMILIH KAMERA ---
+        const html5QrCode = new Html5Qrcode("reader");
+
+        const startScanner = (deviceId) => {
+            const config = {
                 fps: 10,
                 qrbox: {
-                    width: 400,
-                    height: 400
+                    width: 250,
+                    height: 250
                 }
-            },
-            false
-        );
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-    </script>
+            };
+            html5QrCode.start(deviceId, config, onScanSuccess, onScanFailure)
+                .catch(err => {
+                    console.error("Gagal memulai scanner:", err);
+                    Swal.fire('Error Kamera', 'Gagal memulai kamera yang dipilih.', 'error');
+                });
+        };
 
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const cameraSelect = document.getElementById('camera-select');
+
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    devices.forEach(device => {
+                        let option = document.createElement('option');
+                        option.value = device.id;
+                        option.innerHTML = device.label;
+                        cameraSelect.appendChild(option);
+                    });
+
+                    startScanner(devices[0].id);
+
+                    cameraSelect.addEventListener('change', () => {
+                        html5QrCode.stop().then(() => {
+                            startScanner(cameraSelect.value);
+                        }).catch(err => {
+                            console.error("Gagal stop scanner:", err);
+                            startScanner(cameraSelect.value);
+                        });
+                    });
+                }
+            }).catch(err => {
+                Swal.fire('Error!',
+                    'Tidak bisa mendapatkan daftar kamera. Pastikan izin kamera sudah diberikan (HTTPS diperlukan).',
+                    'error');
+            });
+        });
+    </script>
 @endsection

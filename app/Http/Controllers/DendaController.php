@@ -17,20 +17,28 @@ class DendaController extends Controller
         $tanggalSelesai = $request->input('tanggal_selesai', date('Y-m-d'));
         $status = $request->input('status');
 
-        // Query denda dengan relasi parkir, tarif, user, staff
-        $query = Denda::with(['parkir.tarif', 'parkir.user.staff'])
-            ->whereHas('parkir', function ($q) use ($tanggalMulai, $tanggalSelesai) {
+        // Query denda dengan relasi
+        $query = Denda::with(['parkir.tarif', 'parkir.user.staff']);
+
+        if ($status === 'Belum Bayar') {
+            // Tampilkan semua denda belum bayar, tanpa filter tanggal
+            $query->where('status', 'Belum Bayar');
+        } else {
+            // Filter berdasarkan tanggal masuk
+            $query->whereHas('parkir', function ($q) use ($tanggalMulai, $tanggalSelesai) {
                 $q->whereBetween('waktu_masuk', ["$tanggalMulai 00:00:00", "$tanggalSelesai 23:59:59"]);
             });
 
-        if ($status) {
-            $query->where('status', $status);
+            if ($status) {
+                $query->where('status', $status);
+            }
         }
 
         $dataDenda = $query->orderByDesc('created_at')->get();
 
         return view('manajemen-denda.tampil', compact('dataDenda', 'tanggalMulai', 'tanggalSelesai', 'status'));
     }
+
 
 
 

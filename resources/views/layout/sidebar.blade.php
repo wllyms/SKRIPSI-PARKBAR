@@ -166,30 +166,39 @@
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
         <!-- NAVBAR -->
+
         <!-- Logout Modal-->
         <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="logoutModalLabel">Apakah Anda yakin ingin logout?</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
+            <div class="modal-dialog modal-dialog-centered" role="document"> {{-- Modal di tengah --}}
+                <div class="modal-content border-0 shadow-lg rounded-3">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title font-weight-bold" id="logoutModalLabel">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Konfirmasi Logout
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        Klik logout untuk mengakhiri sesi Anda.
+                    <div class="modal-body text-center">
+                        <p class="mb-2">Apakah Anda yakin ingin keluar dari sesi saat ini?</p>
+                        <small class="text-muted">Klik tombol <strong>Logout</strong> untuk melanjutkan.</small>
                     </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-outline-secondary px-4" type="button" data-dismiss="modal">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
-                            <button class="btn btn-primary" type="submit">Logout</button>
+                            <button class="btn btn-danger px-4" type="submit">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <nav class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top bg-gradient-primary">
             <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">

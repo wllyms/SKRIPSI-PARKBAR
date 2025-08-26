@@ -6,40 +6,44 @@
 @section('content')
 
     {{-- Filter Tanggal --}}
-    <div class="card shadow-sm mb-4">
-        {{-- MODIFIKASI DIMULAI DI SINI --}}
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-filter"></i> Filter Laporan</h6>
+    <div class="col-lg-12">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header font-weight-bold text-primary">
+                <i class="fas fa-filter"></i> Filter Laporan Kepuasan
+            </div>
 
-            {{-- INI ADALAH TOMBOL CETAK PDF ANDA --}}
-            <a href="{{ route('laporan.kepuasan.cetak', request()->query()) }}" target="_blank" class="btn btn-success btn-sm">
-                <i class="fas fa-file-pdf"></i> Cetak PDF
-            </a>
-            {{-- TOMBOL CETAK PDF SELESAI --}}
+            <div class="card-body">
+                <form action="{{ route('laporan.kepuasan.index') }}" method="GET">
+                    <div class="row">
+                        {{-- Dari Tanggal --}}
+                        <div class="col-md-6 mb-2">
+                            <label for="start_date" class="small font-weight-bold">Dari Tanggal</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control"
+                                value="{{ request('start_date', $startDate->format('Y-m-d')) }}">
+                        </div>
 
-        </div>
-        {{-- MODIFIKASI SELESAI --}}
+                        {{-- Sampai Tanggal --}}
+                        <div class="col-md-6 mb-2">
+                            <label for="end_date" class="small font-weight-bold">Sampai Tanggal</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control"
+                                value="{{ request('end_date', $endDate->format('Y-m-d')) }}">
+                        </div>
+                    </div>
 
-        <div class="card-body">
-            <form action="{{ route('laporan.kepuasan.index') }}" method="GET">
-                <div class="form-row align-items-end">
-                    <div class="form-group col-md-5">
-                        <label for="start_date">Dari Tanggal</label>
-                        <input type="date" name="start_date" class="form-control"
-                            value="{{ request('start_date', $startDate->format('Y-m-d')) }}">
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter"></i> Terapkan Filter
+                        </button>
+                        <a href="{{ route('laporan.kepuasan.cetak', request()->query()) }}" target="_blank"
+                            class="btn btn-success">
+                            <i class="fas fa-file-pdf"></i> Cetak PDF
+                        </a>
                     </div>
-                    <div class="form-group col-md-5">
-                        <label for="end_date">Sampai Tanggal</label>
-                        <input type="date" name="end_date" class="form-control"
-                            value="{{ request('end_date', $endDate->format('Y-m-d')) }}">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">Terapkan</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
+
 
     {{-- Statistik Umum --}}
     <div class="row">

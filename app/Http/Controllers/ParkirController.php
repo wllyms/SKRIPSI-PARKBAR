@@ -120,19 +120,15 @@ class ParkirController extends Controller
             return back()->withErrors(['waktu_keluar' => 'Waktu keluar tidak boleh lebih awal dari waktu masuk.']);
         }
 
-        // 1. Panggil helper untuk menghitung biaya dan denda
         $hasilKalkulasi = $this->hitungBiayaDanDenda($parkir, $waktuKeluar);
 
-        // 2. Panggil helper untuk update status parkir & slot
         $this->updateStatusParkir($parkir, $waktuKeluar, $hasilKalkulasi['durasiMenit']);
 
-        // 3. Panggil helper untuk simpan denda HANYA JIKA ada denda
+
         if ($hasilKalkulasi['denda'] > 0) {
             $this->simpanDenda($parkir, $hasilKalkulasi['denda']);
         }
 
-        // 4. SELALU arahkan ke halaman cetak struk terpadu
-        // Halaman struk ini nantinya yang akan menampilkan detail parkir, denda (jika ada), dan QR code
         return redirect()->route('parkir.cetak-struk', ['id' => $parkir->id]);
     }
 
@@ -261,8 +257,12 @@ class ParkirController extends Controller
     public function cetakParkir($id)
     {
         $parkir = Parkir::with('tarif')->findOrFail($id);
-        $pdf = Pdf::loadView('manajemen-parkir.cetak-parkir', compact('parkir'))
-            ->setPaper([0, 0, 226.77, 283.46], 'portrait'); // 58mm x 100mm dalam satuan points
+
+        $qrCodeData = base64_encode(QrCode::size(100)->generate($parkir->kode_parkir));
+        $qrCode = 'data:image/svg+xml;base64,' . $qrCodeData;
+
+        $pdf = Pdf::loadView('manajemen-parkir.cetak-parkir', compact('parkir', 'qrCode')) // Tambahkan 'qrCode' ke compact
+            ->setPaper([0, 0, 226.77, 453.54], 'portrait'); // Ini adalah 58mm x 160mm, biasanya sudah cukup
 
         return $pdf->stream('Struk_' . $parkir->plat_kendaraan . '.pdf');
     }
@@ -303,31 +303,39 @@ class ParkirController extends Controller
 
 
 
-
     public function laporan(Request $request)
     {
         // Atur rentang tanggal default ke awal bulan ini hingga hari ini
         $tanggalMulaiDefault = now()->startOfMonth()->format('Y-m-d');
         $tanggalSelesaiDefault = now()->format('Y-m-d');
 
-        // Ambil tanggal dari input user, jika tidak ada, gunakan default
+        // Ambil semua input filter dari request
         $tanggalMulai = $request->input('tanggal_mulai', $tanggalMulaiDefault);
         $tanggalSelesai = $request->input('tanggal_selesai', $tanggalSelesaiDefault);
+        $status = $request->input('status'); // Ambil input status
 
-        // Konversi ke objek Carbon untuk query yang akurat
+        // Konversi tanggal ke Carbon untuk query yang akurat
         $start = \Carbon\Carbon::parse($tanggalMulai)->startOfDay();
         $end = \Carbon\Carbon::parse($tanggalSelesai)->endOfDay();
 
-        // Ambil SEMUA data parkir (normal & denda) dalam rentang tanggal
-        $dataParkir = Parkir::with(['user.staff', 'tarif.kategori', 'denda'])
-            ->whereBetween('waktu_masuk', [$start, $end])
-            ->orderBy('waktu_masuk', 'desc')
-            ->get();
+        // Bangun query dasar dengan semua relasi yang dibutuhkan
+        $query = Parkir::with(['user.staff', 'tarif.kategori', 'denda'])
+            ->whereBetween('waktu_masuk', [$start, $end]);
 
-        return view('laporan.parkir.parkir', compact( // Pastikan nama view benar
+        // Tambahkan filter status jika ada
+        $query->when($status, function ($q) use ($status) {
+            return $q->where('status', $status);
+        });
+        // ==========================================================
+
+        // Eksekusi query dengan urutan
+        $dataParkir = $query->orderBy('waktu_masuk', 'desc')->get();
+
+        return view('laporan.parkir.parkir', compact(
             'dataParkir',
             'tanggalMulai',
             'tanggalSelesai'
+            // Variabel 'status' tidak perlu dikirim ke view karena sudah ada di 'request()'
         ));
     }
 

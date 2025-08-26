@@ -6,50 +6,48 @@
     <div class="row">
         <!-- Filter Form -->
         <div class="col-lg-12">
-            <div class="card mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header font-weight-bold text-primary">
+                    <i class="fas fa-filter"></i> Filter Laporan Pengaduan
+                </div>
+                <div class="card-body">
                     <form action="{{ route('laporan.pengaduan') }}" method="GET">
-                        <div class="row mb-1">
-                            <!-- Filter Tanggal Mulai -->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="tanggal_mulai">Tanggal Mulai</label>
-                                    <input type="date" class="form-control" name="tanggal_mulai" id="tanggal_mulai"
-                                        value="{{ request('tanggal_mulai', $tanggalMulai) }}">
-                                </div>
+                        <div class="row">
+                            {{-- Tanggal Mulai --}}
+                            <div class="col-md-6 mb-2">
+                                <label for="tanggal_mulai" class="small font-weight-bold">Tanggal Mulai</label>
+                                <input type="date" class="form-control" name="tanggal_mulai" id="tanggal_mulai"
+                                    value="{{ request('tanggal_mulai', $tanggalMulai) }}">
                             </div>
-                            <!-- Filter Tanggal Selesai -->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="tanggal_selesai">Tanggal Selesai</label>
-                                    <input type="date" class="form-control" name="tanggal_selesai" id="tanggal_selesai"
-                                        value="{{ request('tanggal_selesai', $tanggalSelesai) }}">
-                                </div>
+
+                            {{-- Tanggal Selesai --}}
+                            <div class="col-md-6 mb-2">
+                                <label for="tanggal_selesai" class="small font-weight-bold">Tanggal Selesai</label>
+                                <input type="date" class="form-control" name="tanggal_selesai" id="tanggal_selesai"
+                                    value="{{ request('tanggal_selesai', $tanggalSelesai) }}">
                             </div>
                         </div>
-                        <!-- Tombol Filter -->
-                        <div class="row mb-3">
-                            <div class="col-md-6 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-filter"></i> Filter
-                                </button>
-                            </div>
+
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter"></i> Terapkan Filter
+                            </button>
+
+                            {{-- Tombol Cetak PDF jika diperlukan --}}
+                            <a href="{{ route('laporan.pengaduan.cetak', request()->query()) }}" target="_blank"
+                                class="btn btn-success">
+                                <i class="fas fa-file-pdf"></i> Cetak PDF
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
+
         <!-- Tabel Laporan Pengaduan -->
         <div class="col-lg-12">
             <div class="card mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <a href="{{ route('laporan.pengaduan.cetak', ['tanggal_mulai' => request('tanggal_mulai', $tanggalMulai), 'tanggal_selesai' => request('tanggal_selesai', $tanggalSelesai)]) }}"
-                        target="_blank" class="btn btn-success">
-                        <i class="fas fa-file-pdf"></i> Cetak
-                    </a>
-                    <h6 class="mb-0 font-weight-bold text-primary">Data Pengaduan Pengunjung</h6>
-                </div>
                 <div class="table-responsive p-3">
                     <table class="table table-striped table-bordered" id="dataTable" style="margin-top: 20px;">
                         <thead class="thead-light">

@@ -41,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
 
     //-------------------------------------------------
     // GRUP 1: FITUR OPERASIONAL (Untuk Admin & Super Admin)
-    //-------------------------------------------------
+    //------------------------------------------------- 
     Route::middleware('role:admin,super_admin')->group(function () {
         Route::get('/beranda', [ParkirController::class, 'dashboard'])->name('beranda');
         Route::get('/parkir', [ParkirController::class, 'tampilkanKendaraanTerparkir']);
