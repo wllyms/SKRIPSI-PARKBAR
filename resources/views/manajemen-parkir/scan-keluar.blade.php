@@ -70,7 +70,7 @@
                         decodedText: decodedText
                     }) // Sesuaikan key jika perlu
                 })
-                .then(response => response.json())
+                .then(response => response.json()) 
                 .then(data => {
                     if (data && data.success) {
                         Swal.fire({

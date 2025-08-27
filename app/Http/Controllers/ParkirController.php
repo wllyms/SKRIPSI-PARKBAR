@@ -532,6 +532,21 @@ class ParkirController extends Controller
             $dataKeluarMingguIni[] = Parkir::whereDate('waktu_keluar', $date->toDateString())->count();
         }
 
+        // --- Tambahan untuk Grafik Bulanan ---
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        $labelsBulanIni = [];
+        $dataMasukBulanIni = [];
+        $dataKeluarBulanIni = [];
+
+        for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay()) {
+            $labelsBulanIni[] = $date->format('j M'); // Format: '1 Agt', '2 Agt', dst.
+            $dataMasukBulanIni[] = Parkir::whereDate('waktu_masuk', $date->toDateString())->count();
+            $dataKeluarBulanIni[] = Parkir::whereDate('waktu_keluar', $date->toDateString())->count();
+        }
+
+        // --- Kirim data ke view ---
         return view('beranda', compact(
             'totalTerparkir',
             'totalKeluar',
@@ -540,7 +555,10 @@ class ParkirController extends Controller
             'kendaraanPegawaiTerparkir',
             'labelsHariMingguIni',
             'dataMasukMingguIni',
-            'dataKeluarMingguIni'
+            'dataKeluarMingguIni',
+            'labelsBulanIni',      // Tambahkan variabel baru ini
+            'dataMasukBulanIni',   // Tambahkan variabel baru ini
+            'dataKeluarBulanIni'   // Opsional: jika Anda ingin menampilkan tren keluar juga
         ));
     }
 }

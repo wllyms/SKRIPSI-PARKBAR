@@ -6,10 +6,8 @@
 
     <div class="container-fluid">
 
-        <!-- Bungkus semua isi dashboard ke card putih -->
         <div class="card p-3 shadow-sm bg-white rounded">
 
-            <!-- Informasi Ringkas -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <div>
                     <h5 class="text-gray-800 mb-1">
@@ -20,7 +18,13 @@
                 </div>
             </div>
 
-            <!-- Kartu Informasi Utama -->
+            {{-- MULAI SINI: BAGIAN UNTUK MELETAKKAN GAMBAR --}}
+            <div class="text-center mb-4">
+                <img src="{{ asset('storage/rs bhayangkara.png') }}" class="img-fluid rounded shadow" style="max-width: 100%;"
+                    alt="Rumah Sakit Bhayangkara">
+            </div>
+            {{-- SELESAI SINI --}}
+
             <div class="row">
 
                 @php
@@ -80,7 +84,6 @@
                 @endforeach
             </div>
 
-            <!-- Statistik Kendaraan Masuk & Keluar Hari Ini -->
             <div class="row">
                 <div class="col-lg-6 mb-4">
                     <div class="card shadow">
@@ -93,7 +96,6 @@
                     </div>
                 </div>
 
-                <!-- Grafik Tren Mingguan -->
                 <div class="col-lg-6 mb-4">
                     <div class="card shadow">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
@@ -106,11 +108,23 @@
                 </div>
             </div>
 
-        </div> <!-- End card putih -->
+            {{-- Tambahkan Grafik Bulanan di sini --}}
+            <div class="row">
+                <div class="col-lg-12 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Tren Jumlah Kendaraan Masuk - Bulan Ini</h6>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartTrenBulanan" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+        </div>
     </div>
 
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
@@ -176,9 +190,68 @@
                 }
             }
         });
+
+        // Grafik Tren Bulanan
+        new Chart(document.getElementById('chartTrenBulanan'), {
+            type: 'bar', // Menggunakan bar chart lebih jelas untuk data harian
+            data: {
+                labels: @json($labelsBulanIni),
+                datasets: [{
+                    label: 'Jumlah Kendaraan Masuk',
+                    data: @json($dataMasukBulanIni),
+                    backgroundColor: '#1cc88a', // Warna hijau
+                    borderColor: '#1cc88a',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y + ' kendaraan';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tanggal'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Jumlah'
+                        },
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
     </script>
 
-    <!-- SweetAlert Success -->
     @if (session('success'))
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
