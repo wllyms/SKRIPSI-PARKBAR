@@ -19,9 +19,14 @@
             </div>
 
             {{-- MULAI SINI: BAGIAN UNTUK MELETAKKAN GAMBAR --}}
-            <div class="text-center mb-4">
-                <img src="{{ asset('storage/rs bhayangkara.png') }}" class="img-fluid rounded shadow" style="max-width: 100%;"
-                    alt="Rumah Sakit Bhayangkara">
+            {{-- Menggunakan lebar penuh kolom untuk tampilan yang lebih besar --}}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="text-center">
+                        <img src="{{ asset('storage/rs bhayangkara.png') }}" class="img-fluid rounded shadow"
+                            style="width: 100%;" alt="Rumah Sakit Bhayangkara">
+                    </div>
+                </div>
             </div>
             {{-- SELESAI SINI --}}
 
@@ -34,35 +39,35 @@
                             'value' => $totalTerparkir,
                             'icon' => 'fas fa-car-side',
                             'color' => 'primary',
-                            'gradient' => 'linear-gradient(135deg, #4e73df, #375aee)', // medium blue
+                            'gradient' => 'linear-gradient(135deg, #4e73df, #375aee)',
                         ],
                         [
                             'title' => 'Kendaraan Keluar Hari Ini',
                             'value' => $totalKeluar,
                             'icon' => 'fas fa-sign-out-alt',
                             'color' => 'danger',
-                            'gradient' => 'linear-gradient(135deg, #e74a3b, #c0392b)', // medium red
+                            'gradient' => 'linear-gradient(135deg, #e74a3b, #c0392b)',
                         ],
                         [
                             'title' => 'Pendapatan Hari Ini',
                             'value' => 'Rp ' . number_format($totalPendapatan, 0, ',', '.'),
                             'icon' => 'fas fa-money-bill-wave',
                             'color' => 'success',
-                            'gradient' => 'linear-gradient(135deg, #28a745, #218838)', // medium green
+                            'gradient' => 'linear-gradient(135deg, #28a745, #218838)',
                         ],
                         [
                             'title' => 'Total Denda Hari Ini',
                             'value' => 'Rp ' . number_format($totalDenda, 0, ',', '.'),
                             'icon' => 'fas fa-coins',
                             'color' => 'warning',
-                            'gradient' => 'linear-gradient(135deg, #f39c12, #d68910)', // medium orange
+                            'gradient' => 'linear-gradient(135deg, #f39c12, #d68910)',
                         ],
                         [
                             'title' => 'Pegawai Terparkir Hari Ini',
                             'value' => $kendaraanPegawaiTerparkir,
                             'icon' => 'fas fa-user-tie',
                             'color' => 'info',
-                            'gradient' => 'linear-gradient(135deg, #17a2b8, #138496)', // medium teal
+                            'gradient' => 'linear-gradient(135deg, #17a2b8, #138496)',
                         ],
                     ];
                 @endphp
@@ -122,6 +127,21 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-lg-12 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Lokasi RS Bhayangkara Banjarmasin</h6>
+                        </div>
+                        <div class="card-body">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4512.087707320148!2d114.60858821106726!3d-3.3293442966314535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de423fdbd0e1cdd%3A0x6b0c6091512b5b5!2sRS.%20BHAYANGKARA%20TK.%20III%20BANJARMASIN!5e1!3m2!1sid!2sid!4v1756262762551!5m2!1sid!2sid"
+                                width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
