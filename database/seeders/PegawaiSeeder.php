@@ -8,51 +8,65 @@ use Illuminate\Support\Str;
 
 class PegawaiSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run(): void
     {
-        DB::table('pegawai')->insert([
-            [
-                'kode_member'     => 'MBR-' . Str::upper(Str::random(5)),
-                'plat_kendaraan'  => 'DA1234AB',
-                'nama'            => 'Dr. Andi Pratama',
-                'no_telp'         => '081234567890',
-                'email'           => 'andi.pratama@example.com',
-                'alamat'          => 'Jl. Sultan Adam No. 10, Banjarmasin',
-                'merk_kendaraan'  => 'Toyota Avanza',
-                'image'           => 'default.png', // asumsikan default image
-                'jabatan_id'      => 1, // Dokter
-                'sub_jabatan_id'  => 1, // Dokter Umum
-                'created_at'      => now(),
-                'updated_at'      => now(),
-            ],
-            [
-                'kode_member'     => 'MBR-' . Str::upper(Str::random(5)),
-                'plat_kendaraan'  => 'DA5678CD',
-                'nama'            => 'Siti Rahma',
-                'no_telp'         => '082212345678',
-                'email'           => 'siti.rahma@example.com',
-                'alamat'          => 'Jl. A. Yani KM.5, Banjarmasin',
-                'merk_kendaraan'  => 'Honda Beat',
-                'image'           => 'default.png',
-                'jabatan_id'      => 2, // Perawat
-                'sub_jabatan_id'  => 3, // Perawat IGD
-                'created_at'      => now(),
-                'updated_at'      => now(),
-            ],
-            [
-                'kode_member'     => 'MBR-' . Str::upper(Str::random(5)),
-                'plat_kendaraan'  => 'DA9999EF',
-                'nama'            => 'Budi Santoso',
-                'no_telp'         => '085334455667',
-                'email'           => 'budi.santoso@example.com',
-                'alamat'          => 'Jl. Veteran No. 7, Banjarmasin',
-                'merk_kendaraan'  => 'Yamaha Mio',
-                'image'           => 'default.png',
-                'jabatan_id'      => 3, // Petugas Keamanan
-                'sub_jabatan_id'  => 5, // Satpam Pintu Utama
-                'created_at'      => now(),
-                'updated_at'      => now(),
-            ],
-        ]);
+        // Pastikan tabel `jabatan` dan `sub_jabatan` sudah memiliki data
+        // sebelum menjalankan seeder ini.
+        $jabatanIds = DB::table('jabatan')->pluck('id')->toArray();
+        $subJabatanIds = DB::table('sub_jabatan')->pluck('id')->toArray();
+
+        // Cek apakah tabel relasi kosong.
+        if (empty($jabatanIds) || empty($subJabatanIds)) {
+            $this->command->info('Pastikan tabel `jabatan` dan `sub_jabatan` sudah memiliki data.');
+            return;
+        }
+
+        $data = [];
+        for ($i = 1; $i <= 15; $i++) {
+            $namaLengkap = 'Pegawai ' . $i;
+            $data[] = [
+                'kode_member' => 'MBR-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'plat_kendaraan' => $this->generateRandomPlate(),
+                'nama' => $namaLengkap,
+                'no_telp' => '08' . mt_rand(100000000, 999999999),
+                'email' => Str::slug(Str::words($namaLengkap, 1, '')) . $i . '@bhayangkara.polri.go.id',
+                'alamat' => 'Jalan Damai No. ' . mt_rand(1, 100) . ', Banjarmasin',
+                'merk_kendaraan' => $this->getRandomVehicleBrand(),
+                'image' => 'images/pegawai/' . Str::slug($namaLengkap) . '.jpg', // Path ke gambar dummy
+                'jabatan_id' => $jabatanIds[array_rand($jabatanIds)],
+                'sub_jabatan_id' => $subJabatanIds[array_rand($subJabatanIds)],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        DB::table('pegawai')->insert($data);
+    }
+
+    /**
+     * Generate a random Indonesian-style license plate.
+     */
+    private function generateRandomPlate(): string
+    {
+        $letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $numbers = '0123456789';
+        $prefix = $letters[array_rand(str_split($letters))] . $letters[array_rand(str_split($letters))];
+        $numericPart = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        $suffix = $letters[array_rand(str_split($letters))];
+        return "$prefix $numericPart $suffix";
+    }
+
+    /**
+     * Get a random vehicle brand.
+     */
+    private function getRandomVehicleBrand(): string
+    {
+        $brands = ['Honda', 'Yamaha', 'Suzuki', 'Kawasaki', 'Toyota', 'Daihatsu', 'Mitsubishi', 'Nissan'];
+        return $brands[array_rand($brands)];
     }
 }
