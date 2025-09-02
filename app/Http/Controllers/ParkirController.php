@@ -27,67 +27,94 @@ class ParkirController extends Controller
 
     public function tampil()
     {
-        $tarif = Tarif::all();
+        // Eager load relasi 'kategori' pada model 'Tarif'
+        $tarif = Tarif::with('kategori')->get();
 
-        // Ambil data parkir dengan relasi tarif, user, urutkan berdasarkan waktu_masuk terbaru
+        // Ambil data parkir
         $parkir = Parkir::with('tarif', 'user')
             ->where('status', 'Terparkir')
             ->orderBy('waktu_masuk', 'desc')
             ->get();
 
-        // Generate kode_parkir terbaru
+        // Generate kode_parkir
         $last = Parkir::orderBy('id', 'desc')->first();
         $nextNumber = $last ? ((int)substr($last->kode_parkir, 2)) + 1 : 1;
         $kodeParkir = 'KP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
-        // Waktu sekarang sesuai timezone Makassar
+        // Waktu sekarang
         $jam = \Carbon\Carbon::now('Asia/Makassar')->format('H:i');
 
-        // Ambil slot dengan jumlah kendaraan yang sedang terparkir
-        $slot = SlotParkir::withCount(['parkir as terpakai' => function ($q) {
+        // Ambil data slot parkir
+        $slots = SlotParkir::with('kategori')->withCount(['parkir as terpakai' => function ($q) {
             $q->where('status', 'Terparkir');
         }])->get();
 
-        return view('manajemen-parkir.tampil', compact('tarif', 'parkir', 'jam', 'kodeParkir', 'slot'));
+        // Ubah koleksi slot menjadi array JSON yang siap digunakan di JavaScript
+        $allSlotsData = $slots->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama_slot' => $item->nama_slot,
+                'kapasitas' => $item->kapasitas,
+                'terpakai' => $item->terpakai,
+                'kategori_id' => $item->kategori->id, // Mengambil ID dari relasi kategori
+            ];
+        })->values()->toArray();
+
+        return view('manajemen-parkir.tampil', compact('tarif', 'parkir', 'jam', 'kodeParkir', 'allSlotsData', 'slots'));
     }
 
 
     public function submit(Request $request)
     {
+        // Validasi input
         $request->validate([
             'plat_kendaraan' => 'required|string|max:255',
             'jenis_tarif' => 'required|exists:tarif,id',
             'user_id' => 'required|exists:tuser,id',
-            'slot_id' => 'required|exists:slot_parkir,id',
         ]);
 
-        // Ambil data slot dan hitung yang sedang terparkir
-        $slot = SlotParkir::withCount(['parkir as terpakai' => function ($q) {
-            $q->where('status', Parkir::STATUS_TERPARKIR);
-        }])->findOrFail($request->slot_id);
+        // Ambil data tarif beserta kategorinya
+        $tarif = Tarif::with('kategori')->findOrFail($request->jenis_tarif);
 
-        // Validasi ketersediaan slot
-        if ($slot->terpakai >= $slot->kapasitas) {
-            return back()->with('error', 'Slot "' . $slot->nama_slot . '" sudah penuh. Silakan pilih slot lain.');
+        // Cari slot parkir kosong yang sesuai dengan kategori tarif
+        // 1. Hitung jumlah kendaraan terparkir di setiap slot
+        // 2. Filter slot yang terpakai < kapasitas
+        $slotTersedia = SlotParkir::withCount(['parkir as terpakai' => function ($q) {
+            $q->where('status', 'Terparkir');
+        }])
+            ->where('kategori_id', $tarif->kategori_id)
+            ->havingRaw('kapasitas > terpakai')
+            ->first();
+
+        // Validasi ketersediaan slot: Jika tidak ada slot yang cocok dan kosong, berikan pesan error.
+        if (!$slotTersedia) {
+            return back()->with('error', 'Tidak ada slot parkir yang tersedia untuk jenis kendaraan ini.');
         }
 
-        // Generate kode parkir
-        $last = Parkir::latest('id')->first();
-        $nextNumber = $last ? ((int)substr($last->kode_parkir, 2)) + 1 : 1;
-        $kodeParkir = 'KP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        DB::beginTransaction();
+        try {
+            $last = Parkir::latest('id')->lockForUpdate()->first();
+            $nextNumber = $last ? ((int)substr($last->kode_parkir, 2)) + 1 : 1;
+            $kodeParkir = 'KP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
-        // Simpan data parkir
-        $parkirBaru = Parkir::create([
-            'kode_parkir'    => $kodeParkir,
-            'plat_kendaraan' => $request->plat_kendaraan,
-            'tarif_id'       => $request->jenis_tarif,
-            'user_id'        => $request->user_id,
-            'slot_parkir_id' => $request->slot_id,
-            'waktu_masuk'    => now(),
-            'status'         => Parkir::STATUS_TERPARKIR,
-        ]);
+            // Simpan data parkir
+            $parkirBaru = Parkir::create([
+                'kode_parkir' => $kodeParkir,
+                'plat_kendaraan' => $request->plat_kendaraan,
+                'tarif_id' => $request->jenis_tarif,
+                'user_id' => $request->user_id,
+                'slot_parkir_id' => $slotTersedia->id, // Langsung mengisi slot_id dengan yang otomatis terpilih
+                'waktu_masuk' => now(),
+                'status' => 'Terparkir',
+            ]);
 
-        return redirect()->route('manajemen-parkir.cetak-parkir', ['id' => $parkirBaru->id]);
+            DB::commit();
+
+            return redirect()->route('manajemen-parkir.cetak-parkir', ['id' => $parkirBaru->id]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal memproses data masuk: ' . $e->getMessage());
+        }
     }
 
     public function delete($id)

@@ -41,6 +41,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama Slot</th>
+                                <th>Kategori</th>
                                 <th>Kapasitas</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -50,6 +51,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->nama_slot }}</td>
+                                    <td>{{ $data->kategori->nama_kategori ?? '-' }}</td>
                                     <td>{{ $data->kapasitas }}</td>
                                     <td class="text-center">
                                         <button class="btn btn-warning btn-sm mr-1" data-toggle="modal"

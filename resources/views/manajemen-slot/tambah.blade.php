@@ -1,4 +1,3 @@
-<!-- Modal Tambah Slot -->
 <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <form action="{{ route('manajemen-slot.submit') }}" method="POST">
@@ -18,6 +17,15 @@
                     <div class="form-group">
                         <label>Kapasitas</label>
                         <input type="number" name="kapasitas" class="form-control" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select name="kategori_id" class="form-control" required>
+                            <option value="">Pilih Kategori</option>
+                            @foreach ($kategori as $data)
+                                <option value="{{ $data->id }}">{{ $data->nama_kategori }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
